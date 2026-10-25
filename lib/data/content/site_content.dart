@@ -5,10 +5,10 @@ class Site {
   Site._();
 
   static const name = 'Jyotessa';
-  static const tagline = "The World's Safest & Endless Pearled Candle";
+  static const tagline = 'Hand-poured candles for every celebration';
   static const subTagline = 'Life is too short to light boring candles.';
   static const mission =
-      'We set out to remove the one thing standing between people and a lit candle: the fear of knocking it over. Pearled soy wax burns clean, spills nothing and refills forever — so ambience never has to be a risk.';
+      'We hand-pour candles that make everyday moments feel festive — terracotta diyas and lotus bowls for pooja, rose bouquets for the people you love, and sweet-shop treats you can light. Small batches, clean-burning wax and gift-ready packing, shipped across India.';
   static const supportEmail = 'support@jyotessa.com';
   static const whatsapp = '+91 93105 08371';
   static const phone = '+91 93105 08371';
@@ -55,7 +55,7 @@ const announcements = [
   'Use code GLOW10 for 10% off your first order',
   'Cash on Delivery across 22,000+ pin codes',
   'Same-day dispatch on orders before 2 PM',
-  'Hand-poured in India · 100% soy wax',
+  'Hand-poured in India · 48 handmade designs',
 ];
 
 class Stat {
@@ -70,7 +70,7 @@ const stats = [
   Stat(2143, 'Verified reviews', suffix: '+'),
   Stat(4.9, 'Average rating', suffix: '/5', decimals: 1),
   Stat(22000, 'Pin codes served', suffix: '+'),
-  Stat(0.5, 'Auto-extinguish', suffix: 's', decimals: 1),
+  Stat(48, 'Handmade designs'),
 ];
 
 class Review {
@@ -86,38 +86,38 @@ const reviews = [
   Review(
     'Ananya Menon',
     'Bengaluru',
-    'The Ocean Escape',
-    'My cat knocked it off the side table yesterday and it literally just went out without a drop of hot wax anywhere. Total gamechanger!',
+    'Water-Pond Lotus Candle',
+    'The lotus bowl looked so pretty in my pooja corner that my mother asked for two more. Lovely finishing and very neatly packed.',
   ),
   Review(
     'Rohan Kapadia',
     'Mumbai',
-    'Boho Botanical',
-    'Sent four of these as Diwali gifts. The dried lavender in the ribbed jar got me three phone calls. Two of them have already reordered refills.',
+    'Designer Wax Diya Set',
+    'Ordered the 12-diya combo for Diwali gifting. Burnt evenly, no oil mess, and everyone loved the carved rims.',
   ),
   Review(
     'Sneha Iyer',
     'Chennai',
-    'The Mini Pocket Magic',
-    'I have a toddler, so open flames were off the table for two years. Poured this into an old brass urli and I finally have my evenings back.',
+    'Motichoor Ladoo & Modak Candle Box',
+    'They genuinely look like real sweets! Gave them as Ganpati return gifts and the kids were amazed.',
   ),
   Review(
     'Devika Rathore',
     'Jaipur',
-    'Chai & Parle-G Biscuit Candle',
-    'It smells exactly like 5 PM at my nani’s house. I bought ten more for my office team and everyone wanted to know where it’s from.',
+    '3x3 Rose Pattern Bubble Candle',
+    'Bought the rose cube for our anniversary — it is even prettier in person. Packed beautifully.',
   ),
   Review(
     'Aditya Sharma',
     'New Delhi',
-    'The Endless Refill & Scent Bar',
-    'Bought it for the aesthetic, stayed for the refills. Pulling out the old pool and dropping in a new wick takes about ten seconds.',
+    'Slanted Gel & Hearts Glass Candle',
+    'The gel-and-hearts glass is so aesthetic on my desk. Gifted one to my sister too.',
   ),
   Review(
     'Farah Qureshi',
     'Hyderabad',
-    'Bouquet Candle',
-    'The bouquet is so detailed my mother refused to light it for a week. Packaging was gorgeous — felt like a luxury brand.',
+    '3D Sitting Teddy Bear Candle',
+    'Tiny, detailed and super cute. Perfect little add-on for a birthday hamper.',
   ),
 ];
 
@@ -134,32 +134,32 @@ class FaqGroup {
 }
 
 const faqs = [
-  FaqGroup('Pearled Candles', [
+  FaqGroup('Our Candles', [
     Faq(
-      'How does the auto-extinguish feature work?',
-      'A pearled candle is thousands of loose soy granules with air between them. Only a small pool around the wick is ever molten. Tip the vessel and the dry pearls avalanche over the flame and cut off its oxygen, extinguishing it in roughly half a second.',
+      'What are your candles made of?',
+      'Our candles are hand-poured in small batches with clean-burning candle wax and cotton wicks. Gel candles use a clear candle gel, and diyas and lotus bowls come in terracotta or brass holders.',
     ),
     Faq(
-      'Can I use my own essential oils with the pearls?',
-      'Yes. Stir 8–10 drops of any skin-safe essential or fragrance oil into roughly 100g of pearls, mix for a few seconds, then pour. You can run lavender on a weeknight and amber oud for a dinner party from the very same bag.',
+      'How long does a candle burn?',
+      'It depends on the size: tea lights burn for about 3–4 hours, small sculpted candles for 4–8 hours and larger tins and glasses for longer. Burn for up to 3–4 hours at a time and trim the wick to 5 mm before each burn.',
     ),
     Faq(
-      'How long does 300g of Pearl Wax last?',
-      'A standard 200g jar candle gives roughly 35–40 hours. 300g of pearl wax runs for approximately 55–65 burn hours, and only the melted pool is consumed — the surrounding pearls get reused.',
+      'Do the floating candles really float?',
+      'Yes — our mini rose and daisy floating candles are made to float on water. Place them gently in a bowl, urli or pool and light them with a long lighter.',
+    ),
+    Faq(
+      'Are the sweet-shaped candles safe around kids?',
+      'They look very real, so please keep ladoo, modak and rasgulla candles out of reach of small children and label them clearly when gifting.',
     ),
   ]),
-  FaqGroup('Handcrafted Candles', [
-    Faq(
-      'Are the food-inspired candles safe to keep around kids?',
-      'They are made with 100% soy wax and cotton wicks, but they look very real! Please keep them out of reach of small children and label them clearly when gifting.',
-    ),
-    Faq(
-      'Why does my candle tunnel?',
-      'On the first burn, let the wax pool reach the edges (2–3 hours). Soy wax has a memory, so a short first burn creates a tunnel that is hard to fix later.',
-    ),
+  FaqGroup('Gifting & Custom Orders', [
     Faq(
       'Do you make custom or bulk hampers?',
-      'Yes — we create custom hampers for weddings, corporate Diwali gifting and return gifts. Reach out on WhatsApp or the contact form with quantity and budget.',
+      'Yes — we make custom hampers for weddings, corporate Diwali gifting and return gifts. Reach out on WhatsApp or the contact form with quantity and budget.',
+    ),
+    Faq(
+      'Is the packaging gift-ready?',
+      'Every order is packed with care, and gift boxes come ready to gift. Add a gift note at checkout and we will handwrite it on a card for free.',
     ),
   ]),
   FaqGroup('Orders & Shipping', [
@@ -172,10 +172,6 @@ const faqs = [
       'What if my candle arrives damaged?',
       'Notify us within 48 hours of delivery with an unboxing video or clear photographs and we will send a free replacement.',
     ),
-    Faq(
-      'Is the soy wax safe around dogs and cats?',
-      'The wax is 100% plant-based soy with no paraffin and no lead or zinc wick cores. Use unscented pearls for very sensitive pets and never leave a flame unattended.',
-    ),
   ]),
 ];
 
@@ -187,10 +183,10 @@ class HowStep {
 }
 
 const howItWorks = [
-  HowStep('Pour', 'Fill any heat-safe glass, bowl or vessel with pearl wax — right up to two-thirds full.', '/images/site/step-pour.webp'),
-  HowStep('Insert', 'Plant a braided cotton wick in the centre, leaving about a quarter inch standing proud.', '/images/products/kit-tester.webp'),
-  HowStep('Ignite', 'Light it and settle in. A soft pool forms around the wick — soot-free, smoke-free warmth.', '/images/site/step-ignite.webp'),
-  HowStep('Refresh', 'Once cool, lift out the hardened pool, drop in a fresh wick, and the candle is brand new.', '/images/products/kit-refill.webp'),
+  HowStep('Trim', 'Trim the wick to about 5 mm before every burn for a clean, steady flame.', '/images/products/catalog/designer-diya.jpg'),
+  HowStep('Place', 'Set the candle on a stable, heat-safe surface — away from curtains, drafts, children and pets.', '/images/products/catalog/lotus-pond.jpg'),
+  HowStep('Light', 'Light it and enjoy the glow. Floating candles go gently on water in a bowl or urli.', '/images/products/catalog/heart-gel-glass.jpg'),
+  HowStep('Put out', 'Burn for up to 3–4 hours at a time, then snuff it out — never leave a lit candle unattended.', '/images/products/catalog/rose-bubble.jpg'),
 ];
 
 class Perk {
@@ -200,36 +196,13 @@ class Perk {
 }
 
 const whyUs = [
-  Perk(
-    'Spill-Proof & Safe',
-    'Tip it over and the loose pearls collapse onto the flame, smothering it in under a second. No running wax, no scorched tabletops.',
-  ),
-  Perk('Infinite Reusability', 'Only the melted pool around the wick is spent. Lift it out, drop in a fresh wick, and the remaining pearls are good as new.'),
-  Perk('Refill Any Vessel', 'Old whisky glasses, brass urlis, coconut shells, ceramic bowls — if it holds pearls, it becomes a designer candle.'),
-  Perk('Clean & Non-Toxic', 'Zero soot, zero paraffin, zero lead cores. Just 100% plant-based soy wax that burns cool and leaves walls unmarked.'),
-  Perk('Built from India', 'Jalebi rabri, chai Parle-G, mogra and monsoon — scents from real Indian life, not generic “ocean mist”.'),
-  Perk('Gift-Ready Always', 'Every order ships in a keepsake box with a handwritten note option — no extra charge.'),
+  Perk('Hand-Poured in India', 'Every candle is poured and finished by hand in small batches — no two are exactly alike.'),
+  Perk('Made for Festivals', 'Diyas, lotus bowls and sweet-shop candles made for Diwali, pooja, Ganpati and every celebration.'),
+  Perk('Clean-Burning', 'Quality wax and cotton wicks for a steady, even burn and minimal smoke.'),
+  Perk('Gifts Under ₹500', 'From ₹35 tea-light sets to ₹499 gift boxes — thoughtful gifts for every budget.'),
+  Perk('Custom & Bulk Orders', 'Wedding favours, Diwali hampers and corporate gifting — tell us the quantity and we will make it happen.'),
+  Perk('Gift-Ready Always', 'Every order is packed with care, with a free handwritten note option.'),
 ];
-
-class Comparison {
-  const Comparison(this.caption, this.points, this.image);
-  final String caption;
-  final List<String> points;
-  final String image;
-}
-
-const comparisonPearled = Comparison('Pearled Candle', [
-  'Self-extinguishes in ~0.5s',
-  'No hot wax spill',
-  'Reusable — just replace the wick',
-  'Any vessel you own',
-], SiteImages.proofPearled);
-const comparisonTraditional = Comparison('Traditional Candle', [
-  'Keeps burning on its side',
-  'Hot wax pours across surfaces',
-  'Jar is dead once wax is gone',
-  'Fixed container',
-], SiteImages.proofTraditional);
 
 class QuizOption {
   const QuizOption(this.value, this.label);
@@ -271,59 +244,40 @@ class ScentStory {
 
 const scentStories = [
   ScentStory(
-    'Monsoon Chai',
-    'Cardamom · Ginger · Warm milk',
-    'Rain on the window, a kulhad in hand and a Parle-G dipped just long enough.',
-    '/images/products/chai-parle-g-candle-2.jpg',
-    'chai-parle-g-candle',
-  ),
-  ScentStory(
-    'Seaside Dinner',
-    'Ocean breeze · Sea salt · Driftwood',
-    'Shells, floating pearls and a long table that nobody wants to leave.',
-    '/images/products/kit-ocean.webp',
-    'ocean-escape',
-  ),
-  ScentStory(
     'Diwali Night',
-    'Sandalwood · Marigold · Ghee diya',
-    'Rangoli at the door, a brass urli glowing at the centre of it all.',
-    '/images/products/kamal-jyoti-urli-2.webp',
-    'kamal-jyoti-urli',
+    'Diyas · Rangoli · Family',
+    'Rows of carved terracotta diyas glowing at the door, with no oil and no mess.',
+    '/images/products/catalog/designer-diya.jpg',
+    'designer-diya-pack-of-12',
+  ),
+  ScentStory('Morning Pooja', 'Brass · Lotus · Calm', 'A little lotus pond in a brass bowl, lit beside the mandir at sunrise.', '/images/products/catalog/lotus-pond.jpg', 'lotus-pond'),
+  ScentStory(
+    'Ganpati Bappa',
+    'Modak · Ladoo · Celebration',
+    'Motichoor ladoos and modaks you can light — the sweetest return gift.',
+    '/images/products/catalog/ladoo-modak.jpg',
+    'ladoo-modak',
   ),
   ScentStory(
     'First Anniversary',
-    'Velvet rose · Soft musk',
-    'A bowl of tiny hearts for the person who remembers every little thing.',
-    '/images/products/heart-bowl-candle-2.jpg',
-    'heart-bowl-candle',
+    'Roses · Pink · Romance',
+    'A cube of sculpted roses for the person who remembers every little thing.',
+    '/images/products/catalog/rose-bubble.jpg',
+    'rose-bubble',
   ),
-  ScentStory(
-    'Sunday Halwai',
-    'Saffron · Caramel · Rabdi',
-    'The smell of hot jalebis drifting in from the corner sweet shop.',
-    '/images/products/jalebi-rabdi-candle-2.jpg',
-    'jalebi-rabdi-candle',
-  ),
-  ScentStory(
-    'Slow Mornings',
-    'Lavender · Vanilla foam',
-    'No alarms, no hurry — just a latte and a flickering flame.',
-    '/images/products/lavender-latte-candle-1.jpg',
-    'lavender-latte-candle',
-  ),
+  ScentStory('Cosy Corner', 'Gel · Hearts · Glow', 'Slanted gel and tiny hearts in a glass, flickering on your bedside table.', '/images/products/catalog/heart-gel-glass.jpg', 'heart-gel-glass'),
+  ScentStory('Teddy Day', 'Cute · Gifting · Smiles', 'A little sitting teddy that is almost too cute to light.', '/images/products/catalog/teddy-bear.jpg', 'teddy-bear'),
 ];
 
-const giftingProducts = ['kamal-jyoti-urli', 'festive-diya-set', 'dry-fruit-delight'];
-const heroAvatarProducts = ['chai-parle-g-candle', 'bouquet-candle', 'heart-bowl-candle'];
+const giftingProducts = ['lotus-pond-pack-of-4', 'designer-diya-pack-of-12', 'ladoo-modak'];
+const heroAvatarProducts = ['lotus-pond', 'rose-bubble', 'teddy-bear'];
 
 // ——— About page
 
 const aboutStory = [
-  'A regular candle is a single block of wax — tip it, and everything it’s made of comes pouring out with the flame still attached. We didn’t think that trade-off was necessary just to get warm, flickering light in a room.',
-  'Pearled wax replaces that block with thousands of loose soy pearls. Only the small pool immediately around the wick is ever molten; the rest stays solid, dry and inert. Knock it over, and the dry pearls avalanche across the flame the way sand smothers a spark — no running wax, no scorched wood, no panic.',
-  'The same structure that makes it safe also makes it reusable: once the melted pool hardens, lifting it out and dropping in a fresh wick turns the same jar into a brand-new candle. One pouch, refilled indefinitely, in whatever glass, bowl or shell you already own.',
-  'Alongside the pearls, we hand-pour Indian-inspired candles — chai and Parle-G, jalebi and rabdi, brass urlis for Diwali — because life is too short to light boring candles.',
+  'Jyotessa began at a kitchen stove, pouring candles as gifts for friends and family. The joy on their faces when a diya or a little rose candle was lit is what we still pour into every piece.',
+  'Today we make 48 designs by hand — terracotta wax diyas and lotus water-pond bowls for pooja and Diwali, ladoo, modak and rasgulla candles that look good enough to eat, rose bouquets and rose bubble cubes for the people you love, gel glasses, mandala tins, floating candles and tea lights for every corner of your home.',
+  'Every candle is poured in small batches, finished by hand and packed gift-ready, then shipped across India with Cash on Delivery — because life is too short to light boring candles.',
 ];
 
 class Milestone {
@@ -334,13 +288,13 @@ class Milestone {
 }
 
 const milestones = [
-  Milestone('2021', 'A kitchen experiment', 'The first chai-and-biscuit candle was poured on a stovetop for a friend’s birthday.'),
-  Milestone('2022', 'Handcrafted studio', 'Food-inspired and floral collections launched, hand-poured by a team of six.'),
-  Milestone('2024', 'The pearl idea', 'After a toddler knocked over a jar candle, we started testing loose soy pearls. It changed everything.'),
-  Milestone('2026', 'One home for both', 'Pearled kits and handcrafted candles now live together under one roof — Jyotessa.'),
+  Milestone('2021', 'A kitchen experiment', 'The first candles were poured on a stovetop as gifts for friends and family.'),
+  Milestone('2023', 'Festive favourites', 'Diyas, lotus bowls and sweet-shop candles became our Diwali and Ganpati best-loved range.'),
+  Milestone('2025', 'Roses & bubbles', 'Rose bouquets, bubble cubes and gel glasses joined the collection for gifting and décor.'),
+  Milestone('2026', 'Jyotessa online', 'All 48 designs now ship across India from our studio in Noida.'),
 ];
 
-const aboutProof = [('4.9/5', 'Average rating'), ('2,000+', 'Happy homes'), ('0', 'Spill complaints')];
+const aboutProof = [('4.9/5', 'Average rating'), ('2,000+', 'Happy homes'), ('48', 'Handmade designs')];
 
 // ——— Policies & disclaimer
 
@@ -382,7 +336,7 @@ const policies = {
     ),
     PolicySection(
       'Liability',
-      text: 'The auto-extinguish behaviour reduces spill risk under normal use — it does not remove the need for usual candle-safety precautions.',
+      text: 'Candles involve an open flame. Keep them away from children, pets and anything flammable, and follow the care instructions on each product.',
     ),
   ]),
   'disclaimer': Policy('Disclaimer', [
@@ -390,8 +344,8 @@ const policies = {
       'Open Flame & Product Safety',
       bullets: [
         'Our candles involve a genuine open flame. Never leave a lit candle unattended, and always burn it on a stable, heat-safe surface away from curtains, paper and other flammable material.',
-        'Keep burning candles and loose wax pearls out of reach of young children and pets. Adult supervision is required at all times while a candle is lit.',
-        'The auto-extinguish behaviour described in this app reduces spill risk under normal use — it is not a guarantee against fire in every circumstance, and it does not remove the need for the usual candle-safety precautions above.',
+        'Keep burning candles and wax out of reach of young children and pets. Adult supervision is required at all times while a candle is lit.',
+        'Sweet- and food-shaped candles look very real — they are not edible. Label them clearly when gifting and keep them away from small children.',
         'Fragrance oils and dyes should be kept away from eyes and broken skin, and used only in the quantities suggested. Discontinue use if irritation occurs.',
       ],
     ),
@@ -399,7 +353,7 @@ const policies = {
       'Website & App Content',
       bullets: [
         'We try to keep product descriptions, pricing and imagery accurate and up to date, but we do not warrant that every detail is complete, current or error-free.',
-        'Photographs are for illustration — actual pearl colour, jar shape and included decor may vary slightly by batch.',
+        'Photographs are for illustration — actual colour, shape and included décor may vary slightly by batch, as every candle is hand-poured.',
         'Customer reviews and testimonials reflect individual experiences. They are not a guarantee that you will have the same result.',
       ],
     ),

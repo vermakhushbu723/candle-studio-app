@@ -280,20 +280,20 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
                       children: [
-                        for (final (id, label) in const [('all', 'All'), ('pearled', 'Pearled'), ('handcrafted', 'Handcrafted')])
+                        for (final (id, label) in [(null, 'All'), for (final pc in productCategories) (pc.id, pc.label)])
                           Padding(
                             padding: const EdgeInsets.only(right: 8),
                             child: ChoiceChip(
                               label: Text(label),
-                              selected: _line == id && _category == null,
+                              selected: _category == id,
                               showCheckmark: false,
                               onSelected: (_) => setState(() {
-                                _line = id;
-                                _category = null;
+                                _line = 'all';
+                                _category = id;
                               }),
                             ),
                           ),
-                        if (cat != null)
+                        if (cat != null && cat.isCollection)
                           Padding(
                             padding: const EdgeInsets.only(right: 8),
                             child: InputChip(

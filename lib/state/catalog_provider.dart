@@ -27,7 +27,11 @@ class Catalog {
     return null;
   }
 
-  List<Product> get bestsellers => products.where((p) => bestsellerBadges.contains(p.badge)).toList();
+  /// Badge-marked bestsellers, or the single pieces when nothing is marked (same as the website).
+  List<Product> get bestsellers {
+    final marked = products.where((p) => bestsellerBadges.contains(p.badge)).toList();
+    return marked.isNotEmpty ? marked : products.where((p) => p.isSingle).toList();
+  }
 
   /// True when a product belongs to a category, directly or through a collection.
   bool inCategory(Product p, String id) => p.category == id || p.collections.contains(id);

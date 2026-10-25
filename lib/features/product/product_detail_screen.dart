@@ -67,10 +67,7 @@ class _ProductViewState extends ConsumerState<_ProductView> {
 
   Product get p => widget.product;
 
-  // Pearled kits have one studio shot, so add the brand lifestyle photos (as on the website)
-  List<String> get _images => p.isPearled
-      ? [...p.images, SiteImages.proofPearled, SiteImages.stepPour, SiteImages.stepIgnite, SiteImages.livingRoom]
-      : (p.images.isEmpty ? [?p.image] : p.images);
+  List<String> get _images => p.images.isEmpty ? [?p.image] : p.images;
 
   @override
   void initState() {
@@ -103,7 +100,7 @@ class _ProductViewState extends ConsumerState<_ProductView> {
     final inBag = ref.watch(cartProvider).items.any((i) => i.productId == p.id);
     final bagCount = ref.watch(cartTotalsProvider).count;
     final category = catalog?.category(p.category);
-    final related = (catalog?.products ?? []).where((x) => x.id != p.id && (x.category == p.category || x.line == p.line)).take(8).toList();
+    final related = (catalog?.products ?? []).where((x) => x.id != p.id && (x.category == p.category || x.collections.any(p.collections.contains))).take(8).toList();
     final images = _images;
     final width = MediaQuery.sizeOf(context).width;
 
@@ -220,7 +217,7 @@ class _ProductViewState extends ConsumerState<_ProductView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${p.isPearled ? 'PEARLED CANDLE' : 'HANDCRAFTED CANDLE'}${category == null ? '' : ' · ${category.label.toUpperCase()}'}',
+                        'HANDCRAFTED CANDLE${category == null ? '' : ' · ${category.label.toUpperCase()}'}',
                         style: AppText.eyebrow(color: AppColors.gold),
                       ),
                       const SizedBox(height: 6),
@@ -230,14 +227,16 @@ class _ProductViewState extends ConsumerState<_ProductView> {
                           padding: const EdgeInsets.only(top: 2),
                           child: Text(p.subtitle, style: AppText.muted(size: 13.5)),
                         ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          RatingBadge(p.rating),
-                          const SizedBox(width: 8),
-                          Text('${p.reviews} ratings', style: AppText.muted()),
-                        ],
-                      ),
+                      if (p.hasReviews) ...[
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            RatingBadge(p.rating),
+                            const SizedBox(width: 8),
+                            Text('${p.reviews} ratings', style: AppText.muted()),
+                          ],
+                        ),
+                      ],
                       const SizedBox(height: 12),
                       PriceText(price: p.price, compareAt: p.compareAt, size: 22),
                       Text('Inclusive of all taxes', style: AppText.muted(size: 11.5)),
@@ -303,7 +302,7 @@ class _ProductViewState extends ConsumerState<_ProductView> {
                         (Icons.local_shipping_outlined, shipping.short, 'Dispatched same day before 2 PM · metros in 2–3 days'),
                         (Icons.payments_outlined, 'Cash on Delivery available', '22,000+ pin codes across India'),
                         (Icons.sync_rounded, '7-day easy returns', 'Damaged in transit? Free replacement'),
-                        (Icons.eco_outlined, '100% soy wax', 'Clean burn · no paraffin · no soot'),
+                        (Icons.back_hand_outlined, 'Hand-poured in India', 'Made in small batches · packed gift-ready'),
                       ])
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 6),
@@ -348,7 +347,7 @@ class _ProductViewState extends ConsumerState<_ProductView> {
                   ),
                 ),
                 // Reviews
-                SectionTitle('Ratings & reviews', subtitle: '${p.rating} ★ · ${p.reviews} verified ratings', action: ''),
+                SectionTitle(p.hasReviews ? 'Ratings & reviews' : 'What customers say', subtitle: p.hasReviews ? '${p.rating} ★ · ${p.reviews} verified ratings' : 'Loved in homes across India', action: ''),
                 SizedBox(
                   height: 168,
                   child: ListView.separated(
@@ -360,7 +359,7 @@ class _ProductViewState extends ConsumerState<_ProductView> {
                   ),
                 ),
                 if (related.isNotEmpty) ...[
-                  SectionTitle('Similar candles', onAction: () => context.push(category == null ? '/shop?line=${p.line}' : '/shop?category=${category.id}')),
+                  SectionTitle('Similar candles', onAction: () => context.push(category == null ? '/shop' : '/shop?category=${category.id}')),
                   ProductCarousel(products: related),
                 ],
                 const SizedBox(height: 24),

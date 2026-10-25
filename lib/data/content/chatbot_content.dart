@@ -36,8 +36,8 @@ const botIntents = [
   BotIntent(
     'recommend',
     r'choose|recommend|suggest|which|best|gift for|confused',
-    'Happy to help! Here are our most-loved picks from both ranges:',
-    products: ['ocean-escape', 'chai-parle-g-candle', 'heart-bowl-candle'],
+    'Happy to help! Here are some of our most-loved picks:',
+    products: ['lotus-pond', 'rose-bubble', 'designer-diya'],
     actions: [BotAction(BotActionType.route, 'Take the scent quiz', route: '/scent-finder')],
   ),
   BotIntent(
@@ -61,15 +61,21 @@ const botIntents = [
     ],
   ),
   BotIntent(
-    'pearled',
-    r'pearl|reuse|refill|extinguish|spill|safe|kids|pets|wick',
-    'Pearled candles are loose soy wax pearls — tip one over and the pearls smother the flame in about half a second. Only the melted pool is used, so you just add a fresh wick to reuse it.',
-    actions: [BotAction(BotActionType.route, 'Shop pearled kits', route: '/shop?line=pearled')],
+    'festive',
+    r'diya|diwali|pooja|puja|lotus|ganpati|ganesh|festival|festive',
+    'For Diwali and pooja, try our carved terracotta wax diyas (packs of 4, 8 and 12) and the lotus water-pond candle in a brass bowl. Ladoo & modak candles make sweet return gifts too!',
+    actions: [BotAction(BotActionType.route, 'Shop Pooja & Diyas', route: '/shop?category=pooja-festive')],
+  ),
+  BotIntent(
+    'care',
+    r'safe|kids|pets|wick|burn|how long|care|float',
+    'Trim the wick to 5 mm, burn on a stable heat-safe surface for up to 3–4 hours at a time and never leave a candle unattended. Keep the sweet-shaped candles away from small children — they look very real! Floating candles go gently on water in a bowl or urli.',
+    actions: [BotAction(BotActionType.route, 'Read FAQs', route: '/faq')],
   ),
   BotIntent(
     'offers',
     r'coupon|discount|offer|code|sale|cheap|price',
-    'Use code GLOW10 for 10% off your first order. Prices start at just ₹159.',
+    'Use code GLOW10 for 10% off your first order. Prices start at just ₹35.',
     actions: [BotAction(BotActionType.route, 'Browse all candles', route: '/shop')],
   ),
   BotIntent(

@@ -96,11 +96,11 @@ class _BannerCarouselState extends ConsumerState<BannerCarousel> {
     final festive = catalog?.collections.where((c) => c.isFestive).toList() ?? const <Category>[];
     return [
       const _Slide(
-        image: SiteImages.hero,
-        kicker: 'SPILL-PROOF · REUSABLE',
-        title: 'Pearled soy wax\ncandle kits',
-        cta: 'Shop pearled',
-        route: '/shop?line=pearled',
+        image: '/images/products/catalog/designer-diya.jpg',
+        kicker: 'DIWALI · POOJA',
+        title: 'Designer wax diyas\n& lotus bowls',
+        cta: 'Shop Pooja & Diyas',
+        route: '/shop?category=pooja-festive',
       ),
       const _Slide(image: SiteImages.livingRoom, kicker: 'FOLLOW & SAVE', title: 'Follow us &\nget 10% off', cta: 'Unlock coupon', route: '/follow'),
       if (festive.isNotEmpty)
@@ -112,11 +112,11 @@ class _BannerCarouselState extends ConsumerState<BannerCarousel> {
           route: '/shop?category=${festive.first.id}',
         ),
       const _Slide(
-        image: '/images/products/chai-parle-g-candle-2.jpg',
+        image: '/images/products/catalog/rose-bubble.jpg',
         kicker: 'HAND-POURED IN INDIA',
-        title: 'Candles that smell\nlike home',
-        cta: 'Shop handcrafted',
-        route: '/shop?line=handcrafted',
+        title: 'Roses & bubble\ncandles to gift',
+        cta: 'Shop Bouquets & Roses',
+        route: '/shop?category=floral',
       ),
       const _Slide(
         image: SiteImages.urli,
@@ -203,7 +203,7 @@ class _BannerCarouselState extends ConsumerState<BannerCarousel> {
   }
 }
 
-/// Round category shortcuts (All, Pearled, Handcrafted, each category & collection).
+/// Round category shortcuts (each category & collection).
 class CategoryCircles extends ConsumerWidget {
   const CategoryCircles({super.key});
 
@@ -211,9 +211,7 @@ class CategoryCircles extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final catalog = ref.watch(catalogProvider).valueOrNull;
     final items = <(String, String?, String, String?)>[
-      ('Pearled', '/images/products/kit-ocean.webp', '/shop?line=pearled', '#EADBC8'),
-      ('Handcrafted', '/images/products/heart-bowl-candle-1.jpg', '/shop?line=handcrafted', '#F7E4D8'),
-      for (final c in [...?catalog?.collections, ...productCategories]) (c.label, c.image, '/shop?category=${c.id}', c.tone),
+      for (final c in [...productCategories, ...?catalog?.collections]) (c.label, c.image, '/shop?category=${c.id}', c.tone),
     ];
     return SizedBox(
       height: 104,
@@ -301,7 +299,7 @@ class CouponStrip extends StatelessWidget {
   }
 }
 
-/// Free shipping · COD · soy wax · gift-ready.
+/// Free shipping · COD · hand-poured · gift-ready.
 class TrustRow extends ConsumerWidget {
   const TrustRow({super.key});
 
@@ -311,7 +309,7 @@ class TrustRow extends ConsumerWidget {
     final items = [
       (Icons.local_shipping_outlined, ship.title, ship.text),
       (Icons.payments_outlined, 'COD', '22,000+ pins'),
-      (Icons.eco_outlined, '100% soy', 'No soot'),
+      (Icons.back_hand_outlined, 'Hand-poured', 'Made in India'),
       (Icons.card_giftcard_rounded, 'Gift-ready', 'Free note'),
     ];
     return Container(
@@ -408,7 +406,7 @@ class CollectionRail extends ConsumerWidget {
   }
 }
 
-/// Pearled vs Handcrafted tiles.
+/// Festive & Gifting vs Home & Décor tiles.
 class LineTiles extends ConsumerWidget {
   const LineTiles({super.key});
 
@@ -420,14 +418,14 @@ class LineTiles extends ConsumerWidget {
       child: Row(
         children: [
           for (final line in productLines.values) ...[
-            if (line.id != 'pearled') const SizedBox(width: 10),
+            if (line.id != 'festive') const SizedBox(width: 10),
             Expanded(
               child: Material(
-                color: line.id == 'pearled' ? AppColors.shell : AppColors.sand,
+                color: line.id == 'festive' ? AppColors.shell : AppColors.sand,
                 borderRadius: BorderRadius.circular(14),
                 clipBehavior: Clip.antiAlias,
                 child: InkWell(
-                  onTap: () => context.push('/shop?line=${line.id}'),
+                  onTap: () => context.push('/shop?category=${productCategories.firstWhere((c) => c.line == line.id).id}'),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

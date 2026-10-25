@@ -58,7 +58,7 @@ class _ScentQuizState extends ConsumerState<ScentQuiz> {
         Text('Not sure which candle? Let us match you.', style: AppText.serif(size: 26, color: AppColors.cream)),
         const SizedBox(height: 8),
         Text(
-          'Three quick questions. We’ll pick from both pearled and handcrafted ranges.',
+          'Three quick questions. We’ll pick from all 48 hand-poured designs.',
           style: AppText.sans(size: 14, color: AppColors.cream.withValues(alpha: 0.7)),
         ),
         const SizedBox(height: 16),

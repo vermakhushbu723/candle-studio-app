@@ -3,7 +3,7 @@ class Category {
   const Category({
     required this.id,
     required this.label,
-    required this.line, // pearled | handcrafted | all (collections)
+    required this.line, // category group (festive | home) or all (collections)
     this.image,
     this.tone,
     this.description = '',

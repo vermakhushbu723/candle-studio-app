@@ -12,35 +12,44 @@ class ProductLine {
   final String productId; // photo shown on the "Two ways to glow" card
 }
 
+/// Category groups (same as the website's mega menu). Category.line holds the group id.
 const productLines = {
-  'pearled': ProductLine(
-    id: 'pearled',
-    title: 'Pearled Candles',
-    kicker: 'Pour · Wick · Glow · Repeat',
-    description: 'Loose soy wax pearls you pour into any vessel. Spill-proof, auto-extinguishing and endlessly reusable.',
-    perks: ['Spill-proof', 'Reusable', 'Any vessel'],
-    productId: 'endless-refill',
+  'festive': ProductLine(
+    id: 'festive',
+    title: 'Festive & Gifting',
+    kicker: 'Diwali · Pooja · Love',
+    description: 'Terracotta diyas, lotus pooja bowls, sweet-shop candles and rose bouquets — hand-poured and gift-ready.',
+    perks: ['Diyas', 'Lotus bowls', 'Rose bouquets'],
+    productId: 'designer-diya',
   ),
-  'handcrafted': ProductLine(
-    id: 'handcrafted',
-    title: 'Handcrafted Candles',
-    kicker: 'Built from India, poured by hand',
-    description: 'Sculpted, food-inspired and floral soy candles that smell like chai breaks, monsoon evenings and Diwali nights.',
-    perks: ['Hand-poured', 'Indian scents', 'Gift-ready'],
-    productId: 'heart-bowl-candle',
+  'home': ProductLine(
+    id: 'home',
+    title: 'Home & Décor',
+    kicker: 'Bubbles · Glass · Tea lights',
+    description: 'Bubble cubes, gel glasses, mandala tins, floating candles and tea lights for every corner of your home.',
+    perks: ['Bubble cubes', 'Gel glasses', 'Tea lights'],
+    productId: 'rose-bubble',
   ),
 };
 
 /// Product categories. Collections (Diwali, Valentine…) come from the admin via GET /collections.
 const productCategories = [
-  Category(id: 'pearl-kits', line: 'pearled', label: 'Pearl Decor Kits', tone: '#EADBC8', image: '/images/products/kit-ocean.webp'),
-  Category(id: 'refills', line: 'pearled', label: 'Refills & Scent Bar', tone: '#E8D5C4', image: '/images/products/kit-refill.webp'),
-  Category(id: 'food-inspired', line: 'handcrafted', label: 'Food Inspired', tone: '#F3D9BF', image: '/images/products/chai-parle-g-candle-1.jpg'),
-  Category(id: 'love-in-the-air', line: 'handcrafted', label: 'Love in the Air', tone: '#F7E4D8', image: '/images/products/heart-bowl-candle-1.jpg'),
-  Category(id: 'floral', line: 'handcrafted', label: 'Floral', tone: '#F6E1EA', image: '/images/products/bouquet-candle-1.jpg'),
-  Category(id: 'luxury', line: 'handcrafted', label: 'Luxury & Festive', tone: '#F5E6C4', image: '/images/products/kamal-jyoti-urli-1.webp'),
-  Category(id: 'wax-fresheners', line: 'handcrafted', label: 'Wax Fresheners', tone: '#E6EDE2', image: '/images/products/wardrobe-wax-sachets-1.jpg'),
+  Category(id: 'pooja-festive', line: 'festive', label: 'Pooja & Diyas', tone: '#F5E1C0', image: '/images/products/catalog/lotus-pond.jpg', description: 'Lotus water-pond bowls and terracotta wax diyas for pooja and Diwali.'),
+  Category(id: 'food-inspired', line: 'festive', label: 'Sweets & Treats', tone: '#F3D9BF', image: '/images/products/catalog/ladoo-modak.jpg', description: 'Ladoo, modak, rasgulla and dry-fruit candles that look good enough to eat.'),
+  Category(id: 'floral', line: 'festive', label: 'Bouquets & Roses', tone: '#F7E4D8', image: '/images/products/catalog/yellow-rose-bouquet.jpg', description: '3D rose bouquets, blooming roses and rose gift combos.'),
+  Category(id: 'cute-gifts', line: 'festive', label: 'Cute & Gifting', tone: '#FCE9D8', image: '/images/products/catalog/teddy-bear.jpg', description: 'Teddy bears and cute little candles to gift.'),
+  Category(id: 'bubble-candles', line: 'home', label: 'Bubble Candles', tone: '#E6EEF5', image: '/images/products/catalog/rose-bubble.jpg', description: 'Pastel bubble cubes and rose-pattern cubes — the aesthetic favourites.'),
+  Category(id: 'jars-glass', line: 'home', label: 'Jars & Glass', tone: '#EFE6DD', image: '/images/products/catalog/heart-gel-glass.jpg', description: 'Heart gel glasses and mandala tin jar candles.'),
+  Category(id: 'floating-candles', line: 'home', label: 'Floating Candles', tone: '#FBE3E8', image: '/images/products/catalog/mini-rose-floating.jpg', description: 'Mini rose and daisy candles that float on water — for urlis, bowls and pools.'),
+  Category(id: 'tealights', line: 'home', label: 'Tea Lights', tone: '#F6EDE4', image: '/images/products/catalog/sunflower-tealight.jpg', description: 'Floral, rainbow, scented and classic white tea lights.'),
 ];
+
+String? categoryLabelOf(String? id) {
+  for (final c in productCategories) {
+    if (c.id == id) return c.label;
+  }
+  return null;
+}
 
 class Fragrance {
   const Fragrance(this.id, this.label, this.note);
@@ -65,3 +74,8 @@ String? fragranceLabel(String? id) {
 
 /// Badges that make a product a "bestseller".
 const bestsellerBadges = ['Most Popular', 'Bestseller', 'Hot Selling'];
+
+final _pack = RegExp('Pack of|Gift Box|Combo', caseSensitive: false);
+
+/// True for single pieces (not packs / combos) — the fallback bestseller list.
+bool isSinglePiece(String name, String subtitle) => !_pack.hasMatch('$subtitle $name');

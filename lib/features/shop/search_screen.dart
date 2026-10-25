@@ -10,7 +10,7 @@ import '../../widgets/app_image.dart';
 import '../../widgets/common.dart';
 import 'shop_screen.dart';
 
-const _popular = ['Pearled kit', 'Chai', 'Rose', 'Diwali', 'Lavender', 'Gift set', 'Refill', 'Bouquet'];
+const _popular = ['Diya', 'Lotus', 'Rose', 'Bubble', 'Ladoo', 'Tealight', 'Teddy', 'Bouquet'];
 
 /// Search — recent and popular searches, live suggestions while typing.
 class SearchScreen extends ConsumerStatefulWidget {
@@ -130,7 +130,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 return ListTile(
                   leading: AppImage(p.image, tone: p.tone, width: 48, height: 48, radius: 8),
                   title: Text(p.name, maxLines: 1, overflow: TextOverflow.ellipsis),
-                  subtitle: Text('${p.lineLabel} · ₹${p.price}'),
+                  subtitle: Text('${p.subtitle.isNotEmpty ? p.subtitle : p.categoryLabel} · ₹${p.price}'),
                   onTap: () => context.pushReplacement('/product/${p.id}'),
                 );
               },

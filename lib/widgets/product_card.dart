@@ -92,7 +92,7 @@ class ProductCard extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        product.lineLabel.toUpperCase(),
+                        product.categoryLabel.toUpperCase(),
                         style: AppText.sans(size: 9.5, weight: FontWeight.w700, color: AppColors.gold).copyWith(letterSpacing: 0.8),
                       ),
                       const SizedBox(height: 2),
@@ -103,7 +103,10 @@ class ProductCard extends ConsumerWidget {
                         style: AppText.sans(size: 13.5, weight: FontWeight.w600, height: 1.25),
                       ),
                       const SizedBox(height: 4),
-                      RatingBadge(product.rating, count: product.reviews, small: true),
+                      if (product.hasReviews)
+                        RatingBadge(product.rating, count: product.reviews, small: true)
+                      else
+                        Text(product.subtitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppText.muted(size: 11.5)),
                       const Spacer(),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.end,

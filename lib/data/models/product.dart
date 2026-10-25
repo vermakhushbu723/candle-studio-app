@@ -1,3 +1,5 @@
+import '../content/catalog_content.dart';
+
 /// A candle from GET /products (same shape as the website's catalogue).
 class Product {
   const Product({
@@ -28,7 +30,7 @@ class Product {
   final String id; // slug
   final String name;
   final String subtitle;
-  final String line; // pearled | handcrafted
+  final String line; // handcrafted
   final String category;
   final List<String> collections;
   final int price;
@@ -48,8 +50,9 @@ class Product {
   final String? tone; // visual.bg
   final int? stock;
 
-  bool get isPearled => line == 'pearled';
-  String get lineLabel => isPearled ? 'Pearled' : 'Handcrafted';
+  String get categoryLabel => categoryLabelOf(category) ?? 'Handcrafted';
+  bool get isSingle => isSinglePiece(name, subtitle);
+  bool get hasReviews => reviews > 0;
   String? get image => cover ?? (images.isNotEmpty ? images.first : null);
   bool get outOfStock => stock != null && stock! <= 0;
 

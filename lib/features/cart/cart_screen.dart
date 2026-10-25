@@ -59,7 +59,7 @@ class CartScreen extends ConsumerWidget {
           ? EmptyState(
               icon: Icons.shopping_bag_outlined,
               title: 'Your bag is empty',
-              message: 'Pearled kits, hand-poured candles and gift sets are waiting.',
+              message: 'Diyas, rose candles and gift sets are waiting.',
               actionLabel: 'Start shopping',
               onAction: () => context.go('/'),
             )
@@ -205,7 +205,7 @@ class _CartItem extends ConsumerWidget {
                     ),
                   ],
                 ),
-                Text([p.lineLabel, ?fragranceLabel(line.item.fragrance)].join(' · '), style: AppText.muted(size: 12)),
+                Text([p.subtitle.isNotEmpty ? p.subtitle : p.categoryLabel, ?fragranceLabel(line.item.fragrance)].join(' · '), style: AppText.muted(size: 12)),
                 const SizedBox(height: 6),
                 PriceText(price: p.price, compareAt: p.compareAt, size: 14),
                 const SizedBox(height: 10),

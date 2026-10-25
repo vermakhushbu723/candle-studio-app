@@ -33,18 +33,18 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
 
   List<_Group> _groups(Catalog c) => [
     _Group(
-      'Pearled',
-      Icons.bubble_chart_outlined,
-      productCategories.where((x) => x.line == 'pearled').toList(),
-      '/shop?line=pearled',
-      productLines['pearled']!.description,
+      'Festive & Gifting',
+      Icons.local_fire_department_outlined,
+      productCategories.where((x) => x.line == 'festive').toList(),
+      '/shop?category=pooja-festive',
+      productLines['festive']!.description,
     ),
     _Group(
-      'Handcrafted',
-      Icons.local_fire_department_outlined,
-      productCategories.where((x) => x.line == 'handcrafted').toList(),
-      '/shop?line=handcrafted',
-      productLines['handcrafted']!.description,
+      'Home & Décor',
+      Icons.chair_outlined,
+      productCategories.where((x) => x.line == 'home').toList(),
+      '/shop',
+      productLines['home']!.description,
     ),
     _Group(
       'Festive',

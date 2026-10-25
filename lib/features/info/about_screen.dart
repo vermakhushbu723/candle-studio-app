@@ -87,24 +87,6 @@ class AboutScreen extends StatelessWidget {
             ),
           ),
           SectionCard(
-            title: 'The safety test',
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Both candles were knocked off the table. Here’s what each did next.', style: AppText.muted(size: 12.5)),
-                const SizedBox(height: 12),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(child: _Comparison(data: comparisonTraditional, good: false)),
-                    const SizedBox(width: 10),
-                    Expanded(child: _Comparison(data: comparisonPearled, good: true)),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          SectionCard(
             title: 'Why Jyotessa',
             child: Column(
               children: [
@@ -137,7 +119,7 @@ class AboutScreen extends StatelessWidget {
             ),
           ),
           SectionCard(
-            title: 'How pearled candles work',
+            title: 'Candle care',
             child: Column(
               children: [
                 for (var i = 0; i < howItWorks.length; i++)
@@ -207,52 +189,6 @@ class AboutScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
             child: ElevatedButton(onPressed: () => context.push('/shop'), child: const Text('SHOP THE CANDLES')),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _Comparison extends StatelessWidget {
-  const _Comparison({required this.data, required this.good});
-  final Comparison data;
-  final bool good;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: good ? const Color(0xFFF2FBF5) : AppTheme.background,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: good ? const Color(0xFF9AD8B4) : AppColors.linen),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AspectRatio(aspectRatio: 4 / 3, child: AppImage(data.image)),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(data.caption, style: AppText.sans(size: 13, weight: FontWeight.w800)),
-                const SizedBox(height: 6),
-                for (final p in data.points)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(good ? Icons.check_circle_rounded : Icons.cancel_rounded, size: 14, color: good ? const Color(0xFF168A4C) : AppColors.danger),
-                        const SizedBox(width: 5),
-                        Expanded(child: Text(p, style: AppText.sans(size: 11.5, height: 1.3))),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
           ),
         ],
       ),
