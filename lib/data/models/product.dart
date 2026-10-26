@@ -1,5 +1,19 @@
 import '../content/catalog_content.dart';
 
+/// A colour the customer can pick; its photos replace the gallery when chosen.
+class ProductColor {
+  const ProductColor({required this.name, this.hex = '', this.images = const []});
+  final String name;
+  final String hex;
+  final List<String> images;
+
+  factory ProductColor.fromJson(Map<String, dynamic> j) => ProductColor(
+    name: '${j['name'] ?? ''}',
+    hex: '${j['hex'] ?? ''}',
+    images: j['images'] is List ? (j['images'] as List).map((e) => '$e').toList() : const [],
+  );
+}
+
 /// A candle from GET /products (same shape as the website's catalogue).
 class Product {
   const Product({
@@ -22,6 +36,9 @@ class Product {
     required this.howToUse,
     required this.hasFragrances,
     required this.images,
+    this.colors = const [],
+    this.variantGroup = '',
+    this.variantLabel = '',
     this.cover,
     this.tone,
     this.stock,
@@ -46,6 +63,9 @@ class Product {
   final List<String> howToUse;
   final bool hasFragrances;
   final List<String> images;
+  final List<ProductColor> colors;
+  final String variantGroup; // pack sizes of one design share a group
+  final String variantLabel; // e.g. "Pack of 2"
   final String? cover; // visual.image
   final String? tone; // visual.bg
   final int? stock;
@@ -55,6 +75,14 @@ class Product {
   bool get hasReviews => reviews > 0;
   String? get image => cover ?? (images.isNotEmpty ? images.first : null);
   bool get outOfStock => stock != null && stock! <= 0;
+
+  /// Photos for a colour, falling back to the product photos.
+  List<String> imagesFor(String? color) {
+    for (final c in colors) {
+      if (c.name == color && c.images.isNotEmpty) return c.images;
+    }
+    return images.isEmpty ? [?image] : images;
+  }
 
   static List<String> _strings(Object? v) => v is List ? v.map((e) => '$e').toList() : const [];
 
@@ -80,6 +108,11 @@ class Product {
       howToUse: _strings(j['howToUse']),
       hasFragrances: j['fragrances'] == true,
       images: _strings(j['images']),
+      colors: j['colors'] is List
+          ? [for (final c in j['colors'] as List) if (c is Map) ProductColor.fromJson(Map<String, dynamic>.from(c))]
+          : const [],
+      variantGroup: j['variantGroup'] as String? ?? '',
+      variantLabel: j['variantLabel'] as String? ?? '',
       cover: visual['image'] as String?,
       tone: visual['bg'] as String?,
       stock: (j['stock'] as num?)?.toInt(),

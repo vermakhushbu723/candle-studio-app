@@ -61,13 +61,19 @@ class _ProductView extends ConsumerStatefulWidget {
 class _ProductViewState extends ConsumerState<_ProductView> {
   int _qty = 1;
   late String? _fragrance = widget.product.hasFragrances ? fragrances.first.id : null;
+  late String? _color = widget.product.colors.firstOrNull?.name;
   final _gallery = PageController();
   final _scroll = ScrollController();
   bool _collapsed = false;
 
   Product get p => widget.product;
 
-  List<String> get _images => p.images.isEmpty ? [?p.image] : p.images;
+  List<String> get _images => p.imagesFor(_color);
+
+  void _pickColor(String name) {
+    setState(() => _color = name);
+    if (_gallery.hasClients) _gallery.jumpToPage(0);
+  }
 
   @override
   void initState() {
@@ -86,7 +92,7 @@ class _ProductViewState extends ConsumerState<_ProductView> {
   }
 
   void _buyNow() {
-    ref.read(cartProvider.notifier).add(p.id, quantity: _qty, fragrance: _fragrance);
+    ref.read(cartProvider.notifier).add(p.id, quantity: _qty, fragrance: _fragrance, color: _color);
     context.push('/checkout');
   }
 
@@ -97,11 +103,12 @@ class _ProductViewState extends ConsumerState<_ProductView> {
     final catalog = ref.watch(catalogProvider).valueOrNull;
     final shipping = ref.watch(shippingProvider);
     final wished = ref.watch(wishlistProvider).contains(p.id);
-    final inBag = ref.watch(cartProvider).items.any((i) => i.productId == p.id);
+    final inBag = ref.watch(cartProvider).items.any((i) => i.productId == p.id && (p.colors.isEmpty || i.color == _color));
     final bagCount = ref.watch(cartTotalsProvider).count;
     final category = catalog?.category(p.category);
     final related = (catalog?.products ?? []).where((x) => x.id != p.id && (x.category == p.category || x.collections.any(p.collections.contains))).take(8).toList();
     final images = _images;
+    final packs = catalog?.variantsOf(p) ?? const <Product>[];
     final width = MediaQuery.sizeOf(context).width;
 
     Widget roundIcon(IconData icon, VoidCallback onTap, {Color? color, Widget? child}) => Padding(
@@ -122,7 +129,7 @@ class _ProductViewState extends ConsumerState<_ProductView> {
           children: [
             Expanded(
               child: OutlinedButton.icon(
-                onPressed: p.outOfStock ? null : () => inBag ? context.go('/cart') : addToCart(context, ref, p, quantity: _qty, fragrance: _fragrance),
+                onPressed: p.outOfStock ? null : () => inBag ? context.go('/cart') : addToCart(context, ref, p, quantity: _qty, fragrance: _fragrance, color: _color),
                 icon: Icon(inBag ? Icons.shopping_bag_rounded : Icons.shopping_bag_outlined, size: 20),
                 label: Text(inBag ? 'GO TO BAG' : 'ADD TO BAG'),
               ),
@@ -253,6 +260,84 @@ class _ProductViewState extends ConsumerState<_ProductView> {
                     ],
                   ),
                 ),
+                // Colour
+                if (p.colors.isNotEmpty)
+                  SectionCard(
+                    title: 'Colour: ${_color ?? ''}',
+                    child: SizedBox(
+                      height: 104,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: p.colors.length,
+                        separatorBuilder: (_, _) => const SizedBox(width: 10),
+                        itemBuilder: (_, i) {
+                          final c = p.colors[i];
+                          final selected = c.name == _color;
+                          return GestureDetector(
+                            onTap: () => _pickColor(c.name),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 180),
+                              width: 76,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: selected ? AppColors.terracotta : AppColors.linen, width: selected ? 2 : 1),
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: c.images.isNotEmpty
+                                        ? AppImage(c.images.first, tone: p.tone, width: 76)
+                                        : Center(
+                                            child: CircleAvatar(radius: 20, backgroundColor: AppColors.parse(c.hex, AppColors.linen)),
+                                          ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                                    child: Text(
+                                      c.name,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: AppText.sans(size: 11, weight: selected ? FontWeight.w700 : FontWeight.w500),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                // Pack size
+                if (packs.isNotEmpty)
+                  SectionCard(
+                    title: 'Pack size: ${p.variantLabel}',
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final v in packs)
+                          ChoiceChip(
+                            label: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(v.variantLabel.isNotEmpty ? v.variantLabel : v.subtitle),
+                                Text(
+                                  v.outOfStock ? 'Sold out' : formatPrice(v.price),
+                                  style: AppText.sans(size: 11, weight: FontWeight.w700, color: v.id == p.id ? Colors.white : AppColors.ash),
+                                ),
+                              ],
+                            ),
+                            selected: v.id == p.id,
+                            showCheckmark: false,
+                            onSelected: (_) {
+                              if (v.id != p.id) context.pushReplacement('/product/${v.id}');
+                            },
+                          ),
+                      ],
+                    ),
+                  ),
                 // Fragrance & quantity
                 SectionCard(
                   title: p.hasFragrances ? 'Choose fragrance' : 'Quantity',

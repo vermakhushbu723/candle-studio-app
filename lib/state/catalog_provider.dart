@@ -33,6 +33,13 @@ class Catalog {
     return marked.isNotEmpty ? marked : products.where((p) => p.isSingle).toList();
   }
 
+  /// Pack sizes of the same design (Single, Pack of 2…), cheapest first — empty when there is no choice.
+  List<Product> variantsOf(Product p) {
+    if (p.variantGroup.isEmpty) return const [];
+    final group = products.where((x) => x.variantGroup == p.variantGroup).toList()..sort((a, b) => a.price - b.price);
+    return group.length > 1 ? group : const [];
+  }
+
   /// True when a product belongs to a category, directly or through a collection.
   bool inCategory(Product p, String id) => p.category == id || p.collections.contains(id);
 

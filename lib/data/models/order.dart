@@ -86,11 +86,12 @@ class Order {
 }
 
 class OrderItem {
-  const OrderItem({required this.name, required this.quantity, required this.price, this.fragrance, this.image});
+  const OrderItem({required this.name, required this.quantity, required this.price, this.fragrance, this.color, this.image});
   final String name;
   final int quantity;
   final int price;
   final String? fragrance;
+  final String? color;
   final String? image;
 
   factory OrderItem.fromJson(Map<String, dynamic> j) => OrderItem(
@@ -98,6 +99,7 @@ class OrderItem {
     quantity: (j['quantity'] as num?)?.toInt() ?? 1,
     price: (j['price'] as num?)?.toInt() ?? 0,
     fragrance: j['fragrance'] as String?,
+    color: j['color'] as String?,
     image: j['image'] as String?,
   );
 }

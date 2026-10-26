@@ -12,8 +12,8 @@ import 'app_image.dart';
 import 'common.dart';
 
 /// Adds to the cart and offers a shortcut to it (product cards, product page, chatbot).
-void addToCart(BuildContext context, WidgetRef ref, Product product, {int quantity = 1, String? fragrance}) {
-  ref.read(cartProvider.notifier).add(product.id, quantity: quantity, fragrance: fragrance ?? (product.hasFragrances ? fragrances.first.id : null));
+void addToCart(BuildContext context, WidgetRef ref, Product product, {int quantity = 1, String? fragrance, String? color}) {
+  ref.read(cartProvider.notifier).add(product.id, quantity: quantity, fragrance: fragrance ?? (product.hasFragrances ? fragrances.first.id : null), color: color);
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
     ..showSnackBar(
@@ -105,6 +105,23 @@ class ProductCard extends ConsumerWidget {
                       const SizedBox(height: 4),
                       if (product.hasReviews)
                         RatingBadge(product.rating, count: product.reviews, small: true)
+                      else if (product.colors.isNotEmpty)
+                        Row(
+                          children: [
+                            for (final c in product.colors.take(5))
+                              Container(
+                                width: 12,
+                                height: 12,
+                                margin: const EdgeInsets.only(right: 4),
+                                decoration: BoxDecoration(
+                                  color: AppColors.parse(c.hex, AppColors.linen),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: Colors.black12),
+                                ),
+                              ),
+                            Text('${product.colors.length} colours', style: AppText.muted(size: 11)),
+                          ],
+                        )
                       else
                         Text(product.subtitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppText.muted(size: 11.5)),
                       const Spacer(),

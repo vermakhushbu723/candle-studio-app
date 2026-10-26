@@ -177,7 +177,7 @@ class _CartItem extends ConsumerWidget {
         children: [
           GestureDetector(
             onTap: () => context.push('/product/${p.id}'),
-            child: AppImage(p.image, tone: p.tone, width: 92, height: 108, radius: 10),
+            child: AppImage(line.image, tone: p.tone, width: 92, height: 108, radius: 10),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -205,7 +205,7 @@ class _CartItem extends ConsumerWidget {
                     ),
                   ],
                 ),
-                Text([p.subtitle.isNotEmpty ? p.subtitle : p.categoryLabel, ?fragranceLabel(line.item.fragrance)].join(' · '), style: AppText.muted(size: 12)),
+                Text([p.subtitle.isNotEmpty ? p.subtitle : p.categoryLabel, ?line.item.color, ?fragranceLabel(line.item.fragrance)].join(' · '), style: AppText.muted(size: 12)),
                 const SizedBox(height: 6),
                 PriceText(price: p.price, compareAt: p.compareAt, size: 14),
                 const SizedBox(height: 10),
