@@ -69,7 +69,7 @@ class Stat {
 const stats = [
   Stat(2143, 'Verified reviews', suffix: '+'),
   Stat(4.9, 'Average rating', suffix: '/5', decimals: 1),
-  Stat(22000, 'Pin codes served', suffix: '+'),
+  Stat(100, 'Hand-poured', suffix: '%'),
   Stat(48, 'Handmade designs'),
 ];
 
