@@ -27,16 +27,17 @@ class PersonalCoupon {
 
 /// Follow & Save offer (GET /offers/follow).
 class FollowOffer {
-  const FollowOffer({required this.enabled, required this.percent, required this.validDays, required this.maxDiscount, required this.links, this.coupon});
+  const FollowOffer({required this.enabled, required this.percent, required this.validDays, required this.maxDiscount, required this.links, this.coupon, this.status, this.handle});
   final bool enabled;
   final int percent;
   final int validDays;
   final int maxDiscount;
   final List<FollowLink> links;
-  final PersonalCoupon? coupon; // this account's coupon, once claimed
+  final PersonalCoupon? coupon; // this account's coupon, once approved
+  final String? status; // null (not claimed) | pending | approved
+  final String? handle; // username the customer followed us from
 
-  FollowOffer withCoupon(PersonalCoupon c) =>
-      FollowOffer(enabled: enabled, percent: percent, validDays: validDays, maxDiscount: maxDiscount, links: links, coupon: c);
+  bool get pending => status == 'pending';
 
   factory FollowOffer.fromJson(Map<String, dynamic> r) {
     final o = r['offer'] as Map<String, dynamic>? ?? {};
@@ -50,6 +51,8 @@ class FollowOffer {
           .map((l) => FollowLink(key: '${l['key']}', label: '${l['label']}', url: '${l['url']}'))
           .toList(),
       coupon: r['coupon'] is Map ? PersonalCoupon.fromJson(r['coupon'] as Map<String, dynamic>) : null,
+      status: r['status'] as String?,
+      handle: r['handle'] as String?,
     );
   }
 }
@@ -61,9 +64,9 @@ class OfferRepository {
   /// POST /offers/follow/device — has this phone already claimed the offer?
   Future<bool> deviceUsed(String deviceId) async => (await api.post('/offers/follow/device', {'deviceId': deviceId}))['deviceUsed'] == true;
 
-  /// POST /offers/follow/claim — one per account and per device.
-  Future<({PersonalCoupon coupon, String message})> claim({required String deviceId, String? fingerprint, required List<String> visited}) async {
-    final r = await api.post('/offers/follow/claim', {'deviceId': deviceId, 'fingerprint': ?fingerprint, 'visited': visited});
-    return (coupon: PersonalCoupon.fromJson(r['coupon'] as Map<String, dynamic>), message: '${r['message'] ?? 'Coupon unlocked'}');
+  /// POST /offers/follow/claim — one per account and per device. The coupon is switched on after the team checks the follow.
+  Future<String> claim({required String deviceId, String? fingerprint, required List<String> visited, required String handle}) async {
+    final r = await api.post('/offers/follow/claim', {'deviceId': deviceId, 'fingerprint': ?fingerprint, 'visited': visited, 'handle': handle});
+    return '${r['message'] ?? 'Thanks! We will check and switch on your coupon soon.'}';
   }
 }

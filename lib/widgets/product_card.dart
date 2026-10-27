@@ -20,6 +20,8 @@ void addToCart(BuildContext context, WidgetRef ref, Product product, {int quanti
       SnackBar(
         content: Text('Added to bag · ${product.name}', maxLines: 1, overflow: TextOverflow.ellipsis),
         action: SnackBarAction(label: 'VIEW BAG', textColor: AppColors.caramel, onPressed: () => context.go('/cart')),
+        duration: const Duration(seconds: 5),
+        persist: false,
       ),
     );
 }

@@ -298,6 +298,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                             padding: const EdgeInsets.only(right: 8),
                             child: InputChip(
                               label: Text(cat.label),
+                              labelStyle: AppText.sans(size: 13, weight: FontWeight.w600, color: Colors.white),
                               selected: true,
                               showCheckmark: false,
                               deleteIconColor: Colors.white,

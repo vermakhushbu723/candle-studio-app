@@ -13,7 +13,7 @@ class Site {
   static const whatsapp = '+91 93105 08371';
   static const phone = '+91 93105 08371';
   static const hours = 'Open 24 hours, 7 days a week';
-  static const shipsTo = 'Handmade in India · Shipping Pan-India';
+  static const shipsTo = 'Handmade in India · Delivering across Uttar Pradesh';
   static const address = 'Near Barat Ghar, Wajidpur, Sector 63, Noida, Uttar Pradesh 201301';
   static const googleMapsUrl =
       'https://www.google.com/maps/search/?api=1&query=Jyotessa%2C%20Wajidpur%2C%20Sector%2063%2C%20Noida%2C%20Uttar%20Pradesh%20201301';
@@ -51,9 +51,9 @@ const instagramFeed = [
 ];
 
 const announcements = [
-  '{shippingShort} · Pan-India',
+  '{shippingShort} · Delivering across {deliveryArea}',
   'Use code GLOW10 for 10% off your first order',
-  'Cash on Delivery across 22,000+ pin codes',
+  'Cash on Delivery on every order',
   'Same-day dispatch on orders before 2 PM',
   'Hand-poured in India · 48 handmade designs',
 ];
@@ -164,10 +164,10 @@ const faqs = [
   ]),
   FaqGroup('Orders & Shipping', [
     Faq(
-      'What are the shipping times across India?',
-      'Orders placed before 2 PM IST are dispatched the same working day. Metro cities receive delivery in 2–3 days, the rest of India in 4–6 days, North-East and island territories in 6–8 days.',
+      'Where do you deliver, and how fast?',
+      'We currently deliver only in {deliveryArea}. Orders placed before 2 PM IST are dispatched the same working day — Noida & Ghaziabad receive delivery in 1–2 days, the rest of Uttar Pradesh in 2–4 days.',
     ),
-    Faq('Is Cash on Delivery available?', 'Yes, COD is available across 22,000+ pin codes. {shipping}'),
+    Faq('Is Cash on Delivery available?', 'Yes, Cash on Delivery is available on every order we deliver ({deliveryArea}). {shipping}'),
     Faq(
       'What if my candle arrives damaged?',
       'Notify us within 48 hours of delivery with an unboxing video or clear photographs and we will send a free replacement.',
@@ -277,7 +277,7 @@ const heroAvatarProducts = ['lotus-pond', 'rose-bubble', 'teddy-bear'];
 const aboutStory = [
   'Jyotessa began at a kitchen stove, pouring candles as gifts for friends and family. The joy on their faces when a diya or a little rose candle was lit is what we still pour into every piece.',
   'Today we make 48 designs by hand — terracotta wax diyas and lotus water-pond bowls for pooja and Diwali, ladoo, modak and rasgulla candles that look good enough to eat, rose bouquets and rose bubble cubes for the people you love, gel glasses, mandala tins, floating candles and tea lights for every corner of your home.',
-  'Every candle is poured in small batches, finished by hand and packed gift-ready, then shipped across India with Cash on Delivery — because life is too short to light boring candles.',
+  'Every candle is poured in small batches, finished by hand and packed gift-ready, then delivered across Uttar Pradesh with Cash on Delivery — because life is too short to light boring candles.',
 ];
 
 class Milestone {
@@ -291,7 +291,7 @@ const milestones = [
   Milestone('2021', 'A kitchen experiment', 'The first candles were poured on a stovetop as gifts for friends and family.'),
   Milestone('2023', 'Festive favourites', 'Diyas, lotus bowls and sweet-shop candles became our Diwali and Ganpati best-loved range.'),
   Milestone('2025', 'Roses & bubbles', 'Rose bouquets, bubble cubes and gel glasses joined the collection for gifting and décor.'),
-  Milestone('2026', 'Jyotessa online', 'All 48 designs now ship across India from our studio in Noida.'),
+  Milestone('2026', 'Jyotessa online', 'All 48 designs now ship across Uttar Pradesh from our studio in Noida.'),
 ];
 
 const aboutProof = [('4.9/5', 'Average rating'), ('2,000+', 'Happy homes'), ('48', 'Handmade designs')];
@@ -314,8 +314,8 @@ class Policy {
 const policies = {
   'shipping': Policy('Shipping Policy', [
     PolicySection('Dispatch', text: 'Orders placed before 2 PM IST are dispatched the same working day. Tracking details are shared over email and WhatsApp.'),
-    PolicySection('Delivery Timelines', text: 'Metro cities — 2 to 3 days. Rest of India — 4 to 6 days. North-East and island territories — 6 to 8 days.'),
-    PolicySection('Shipping Charges', text: '{shipping} COD is available across 22,000+ pin codes.'),
+    PolicySection('Delivery Timelines', text: 'We currently deliver only in {deliveryArea}. Noida & Ghaziabad — 1 to 2 days. Rest of Uttar Pradesh — 2 to 4 days.'),
+    PolicySection('Shipping Charges', text: '{shipping} Cash on Delivery is available on every order.'),
   ]),
   'returns': Policy('Return, Refund & Replacement Policy', [
     PolicySection(

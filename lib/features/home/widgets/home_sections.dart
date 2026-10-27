@@ -203,15 +203,14 @@ class _BannerCarouselState extends ConsumerState<BannerCarousel> {
   }
 }
 
-/// Round category shortcuts (each category & collection).
+/// Round category shortcuts.
 class CategoryCircles extends ConsumerWidget {
   const CategoryCircles({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final catalog = ref.watch(catalogProvider).valueOrNull;
     final items = <(String, String?, String, String?)>[
-      for (final c in [...productCategories, ...?catalog?.collections]) (c.label, c.image, '/shop?category=${c.id}', c.tone),
+      for (final c in productCategories) (c.label, c.image, '/shop?category=${c.id}', c.tone),
     ];
     return SizedBox(
       height: 104,
@@ -308,7 +307,7 @@ class TrustRow extends ConsumerWidget {
     final ship = ref.watch(shippingProvider).perk;
     final items = [
       (Icons.local_shipping_outlined, ship.title, ship.text),
-      (Icons.payments_outlined, 'COD', '22,000+ pins'),
+      (Icons.payments_outlined, 'COD', 'All UP pincodes'),
       (Icons.back_hand_outlined, 'Hand-poured', 'Made in India'),
       (Icons.card_giftcard_rounded, 'Gift-ready', 'Free note'),
     ];
@@ -686,43 +685,63 @@ class HomeFooter extends StatelessWidget {
           const SizedBox(height: 14),
           Wrap(
             alignment: WrapAlignment.center,
-            spacing: 6,
-            runSpacing: 6,
+            spacing: 8,
+            runSpacing: 8,
             children: [
               for (final (label, route) in [('About', '/about'), ('FAQs', '/faq'), ('Contact', '/contact'), ('Policies', '/policies/shipping')])
-                ActionChip(
-                  label: Text(label),
-                  labelStyle: AppText.sans(size: 12, weight: FontWeight.w600, color: AppColors.cream),
-                  backgroundColor: Colors.white10,
-                  side: const BorderSide(color: Colors.white24),
-                  onPressed: () => context.push(route),
-                ),
+                _FooterPill(label: label, onTap: () => context.push(route)),
             ],
           ),
+          const SizedBox(height: 22),
+          Text('FOLLOW & FIND US', style: AppText.eyebrow(color: AppColors.caramel)),
           const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 8,
+            runSpacing: 8,
             children: [
-              IconButton(
-                onPressed: () => Launcher.open(Site.instagram),
-                icon: const Icon(Icons.camera_alt_outlined, color: AppColors.caramel),
-              ),
-              IconButton(
-                onPressed: () => Launcher.open(Site.facebook),
-                icon: const Icon(Icons.facebook_rounded, color: AppColors.caramel),
-              ),
-              IconButton(
-                onPressed: Launcher.whatsapp,
-                icon: const Icon(Icons.chat_outlined, color: AppColors.caramel),
-              ),
-              IconButton(
-                onPressed: Launcher.review,
-                icon: const Icon(Icons.star_border_rounded, color: AppColors.caramel),
-              ),
+              _FooterPill(icon: Icons.camera_alt_outlined, label: 'Instagram', onTap: () => Launcher.open(Site.instagram)),
+              _FooterPill(icon: Icons.facebook_rounded, label: 'Facebook', onTap: () => Launcher.open(Site.facebook)),
+              _FooterPill(icon: Icons.chat_outlined, label: 'WhatsApp', onTap: Launcher.whatsapp),
+              _FooterPill(icon: Icons.star_border_rounded, label: 'Google reviews', onTap: Launcher.review),
+              _FooterPill(icon: Icons.location_on_outlined, label: 'Google Maps', onTap: () => Launcher.open(Site.googleMapsUrl)),
             ],
           ),
+          const SizedBox(height: 14),
+          Text(Site.address, textAlign: TextAlign.center, style: AppText.sans(size: 11.5, color: AppColors.cream.withValues(alpha: 0.6))),
+          const SizedBox(height: 10),
           Text('v1.0.0', style: AppText.sans(size: 10, color: AppColors.cream.withValues(alpha: 0.4))),
         ],
+      ),
+    );
+  }
+}
+
+/// Outlined link on the dark footer.
+class _FooterPill extends StatelessWidget {
+  const _FooterPill({required this.label, required this.onTap, this.icon});
+  final String label;
+  final VoidCallback onTap;
+  final IconData? icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white.withValues(alpha: 0.08),
+      shape: const StadiumBorder(side: BorderSide(color: Colors.white24)),
+      child: InkWell(
+        customBorder: const StadiumBorder(),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (icon != null) ...[Icon(icon, size: 16, color: AppColors.caramel), const SizedBox(width: 6)],
+              Text(label, style: AppText.sans(size: 12.5, weight: FontWeight.w600, color: AppColors.cream)),
+            ],
+          ),
+        ),
       ),
     );
   }

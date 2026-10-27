@@ -12,6 +12,7 @@ import '../../data/models/order.dart';
 import '../../data/repositories/order_repository.dart';
 import '../../services/razorpay_service.dart';
 import '../../state/cart_provider.dart';
+import '../../state/catalog_provider.dart';
 import '../../state/repositories.dart';
 import '../../state/session_provider.dart';
 import '../../widgets/common.dart';
@@ -280,7 +281,12 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                     maxLength: 6,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: const InputDecoration(labelText: 'Pincode', prefixIcon: Icon(Icons.pin_drop_outlined), counterText: ''),
-                    validator: (v) => RegExp(r'^\d{6}$').hasMatch(v?.trim() ?? '') ? null : 'Enter a 6-digit pincode',
+                    validator: (v) {
+                      final pin = v?.trim() ?? '';
+                      if (!RegExp(r'^\d{6}$').hasMatch(pin)) return 'Enter a 6-digit pincode';
+                      final ship = ref.read(shippingProvider);
+                      return ship.deliveryStates.length == 1 ? ship.deliveryError(ship.deliveryStates.first, pin) : null;
+                    },
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
@@ -307,12 +313,30 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: TextFormField(
-                          controller: _state,
-                          textCapitalization: TextCapitalization.words,
-                          textInputAction: TextInputAction.done,
-                          decoration: const InputDecoration(labelText: 'State'),
-                          validator: required,
+                        child: Builder(
+                          builder: (context) {
+                            final ship = ref.watch(shippingProvider);
+                            if (ship.deliveryStates.isEmpty) {
+                              return TextFormField(
+                                controller: _state,
+                                textCapitalization: TextCapitalization.words,
+                                textInputAction: TextInputAction.done,
+                                decoration: const InputDecoration(labelText: 'State'),
+                                validator: required,
+                              );
+                            }
+                            // We only deliver to these states, so the customer picks one of them
+                            final current = ship.deliveryStates.contains(_state.text) ? _state.text : null;
+                            if (current == null && ship.deliveryStates.length == 1) _state.text = ship.deliveryStates.first;
+                            return DropdownButtonFormField<String>(
+                              initialValue: current ?? (ship.deliveryStates.length == 1 ? ship.deliveryStates.first : null),
+                              isExpanded: true,
+                              decoration: const InputDecoration(labelText: 'State'),
+                              items: [for (final s in ship.deliveryStates) DropdownMenuItem(value: s, child: Text(s, overflow: TextOverflow.ellipsis))],
+                              onChanged: (v) => _state.text = v ?? '',
+                              validator: (v) => v == null ? 'Choose your state' : ship.deliveryError(v, _pincode.text.trim()),
+                            );
+                          },
                         ),
                       ),
                     ],

@@ -73,8 +73,6 @@ class HomeScreen extends ConsumerWidget {
                       const CategoryCircles(),
                       const CouponStrip(),
                       _rail(context, 'Bestsellers', 'Our most-loved designs', c.bestsellers, '/shop'),
-                      const SectionTitle('Shop by collection', subtitle: 'Festive specials & curated edits'),
-                      const CollectionRail(),
                       _rail(
                         context,
                         'Festive & Pooja',

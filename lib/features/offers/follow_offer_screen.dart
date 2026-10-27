@@ -33,7 +33,7 @@ Color _colorFor(String key) => switch (key) {
   _ => AppColors.terracotta,
 };
 
-/// Follow & Save — follow our pages, then claim a personal one-time coupon (one per account and per phone).
+/// Follow & Save — follow our pages and share the username; the team checks it and switches on a personal one-time coupon.
 class FollowOfferScreen extends ConsumerStatefulWidget {
   const FollowOfferScreen({super.key});
 
@@ -45,6 +45,13 @@ class _FollowOfferScreenState extends ConsumerState<FollowOfferScreen> {
   List<String> _visited = (LocalStorage.read<List<dynamic>>(LocalStorage.followVisited) ?? []).map((e) => '$e').toList();
   bool _deviceUsed = false;
   bool _claiming = false;
+  final _handle = TextEditingController();
+
+  @override
+  void dispose() {
+    _handle.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -68,12 +75,12 @@ class _FollowOfferScreenState extends ConsumerState<FollowOfferScreen> {
   Future<void> _claim() async {
     setState(() => _claiming = true);
     try {
-      final r = await ref
+      final message = await ref
           .read(offerRepositoryProvider)
-          .claim(deviceId: DeviceIdentity.deviceId(), fingerprint: await DeviceIdentity.fingerprint(), visited: _visited);
+          .claim(deviceId: DeviceIdentity.deviceId(), fingerprint: await DeviceIdentity.fingerprint(), visited: _visited, handle: _handle.text.trim());
       HapticFeedback.mediumImpact();
       ref.invalidate(followOfferProvider);
-      if (mounted) showToast(context, r.message);
+      if (mounted) showToast(context, message);
     } on ApiException catch (e) {
       if (!mounted) return;
       if (e.isUnauthorized) {
@@ -127,6 +134,18 @@ class _FollowOfferScreenState extends ConsumerState<FollowOfferScreen> {
               ),
               if (offer.coupon != null)
                 _CouponCard(coupon: offer.coupon!)
+              else if (offer.pending)
+                Padding(
+                  padding: const EdgeInsets.only(top: 24),
+                  child: EmptyState(
+                    icon: Icons.hourglass_top_rounded,
+                    title: 'We’re checking your follow',
+                    message:
+                        'Thanks${offer.handle == null ? '' : ', @${offer.handle}'}! Our team will check that you follow Jyotessa and switch on your ${offer.percent}% coupon — usually within 24 hours. It will appear right here.',
+                    actionLabel: 'CHECK AGAIN',
+                    onAction: () => ref.invalidate(followOfferProvider),
+                  ),
+                )
               else if (!offer.enabled)
                 const Padding(
                   padding: EdgeInsets.only(top: 32),
@@ -196,11 +215,25 @@ class _FollowOfferScreenState extends ConsumerState<FollowOfferScreen> {
                   n: 3,
                   done: false,
                   title: 'Claim your ${offer.percent}% coupon',
-                  text: allVisited ? 'All set — tap to unlock your code.' : 'Follow all ${offer.links.length} pages above to unlock.',
-                  action: ElevatedButton.icon(
-                    onPressed: user != null && allVisited && !_claiming ? _claim : null,
-                    icon: const Icon(Icons.card_giftcard_rounded),
-                    label: BusyLabel(busy: _claiming, label: 'GET MY ${offer.percent}% COUPON'),
+                  text: allVisited
+                      ? 'Tell us the username you followed from. We check it and switch on your code — usually within 24 hours.'
+                      : 'Follow all ${offer.links.length} pages above to continue.',
+                  action: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      TextField(
+                        controller: _handle,
+                        enabled: allVisited,
+                        onChanged: (_) => setState(() {}),
+                        decoration: const InputDecoration(labelText: 'Your Instagram / Facebook username', prefixText: '@ '),
+                      ),
+                      const SizedBox(height: 10),
+                      ElevatedButton.icon(
+                        onPressed: user != null && allVisited && _handle.text.trim().length >= 2 && !_claiming ? _claim : null,
+                        icon: const Icon(Icons.card_giftcard_rounded),
+                        label: BusyLabel(busy: _claiming, label: 'REQUEST MY ${offer.percent}% COUPON'),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -213,7 +246,8 @@ class _FollowOfferScreenState extends ConsumerState<FollowOfferScreen> {
                       '${offer.percent}% off your order subtotal${offer.maxDiscount > 0 ? ' (up to ${formatPrice(offer.maxDiscount)})' : ''}.',
                       'One coupon per customer account and one per phone.',
                       'Personal — works only when you’re logged in to the account that claimed it.',
-                      'Single use. Valid for ${offer.validDays} days after you claim it.',
+                      'We check every follow before the coupon is switched on — unfollowing later may cancel it.',
+                      'Single use. Valid for ${offer.validDays} days after it is switched on.',
                       'Only one coupon per order. Misuse (multiple accounts, fake numbers) may cancel the coupon.',
                     ])
                       Padding(

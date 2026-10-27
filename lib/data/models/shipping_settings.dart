@@ -4,7 +4,7 @@ enum ShippingMode { free, threshold, flat }
 
 /// Admin → Settings → Shipping charges (GET /settings). Same rules as the API (models/Setting.ts).
 class ShippingSettings {
-  const ShippingSettings({required this.shippingFee, required this.freeShippingEnabled, required this.freeShippingAbove});
+  const ShippingSettings({required this.shippingFee, required this.freeShippingEnabled, required this.freeShippingAbove, this.deliveryStates = const ['Uttar Pradesh']});
 
   /// Used until the API answers (and if it is unreachable).
   static const defaults = ShippingSettings(shippingFee: 79, freeShippingEnabled: true, freeShippingAbove: 899);
@@ -12,11 +12,31 @@ class ShippingSettings {
   final int shippingFee;
   final bool freeShippingEnabled;
   final int freeShippingAbove;
+  final List<String> deliveryStates; // states we deliver to; empty = all of India
+
+  // First two pincode digits of a state — same table as the API (models/Setting.ts)
+  static const _pinPrefixes = {'Uttar Pradesh': ['20', '21', '22', '23', '24', '25', '26', '27', '28']};
+
+  /// "Uttar Pradesh" / "all of India" — where orders can be delivered.
+  String get deliveryArea => deliveryStates.isEmpty ? 'all of India' : deliveryStates.join(', ');
+
+  /// Why we can't deliver to this address, or null when we can.
+  String? deliveryError(String state, String pincode) {
+    if (deliveryStates.isEmpty) return null;
+    final match = deliveryStates.where((s) => s.toLowerCase() == state.trim().toLowerCase()).firstOrNull;
+    if (match == null) return 'We currently deliver only in $deliveryArea.';
+    final prefixes = _pinPrefixes[match];
+    if (prefixes != null && pincode.length >= 2 && !prefixes.contains(pincode.substring(0, 2))) {
+      return 'This pincode is not in $match. We deliver only in $deliveryArea.';
+    }
+    return null;
+  }
 
   factory ShippingSettings.fromJson(Map<String, dynamic> j) => ShippingSettings(
     shippingFee: (j['shippingFee'] as num?)?.toInt() ?? defaults.shippingFee,
     freeShippingEnabled: j['freeShippingEnabled'] as bool? ?? defaults.freeShippingEnabled,
     freeShippingAbove: (j['freeShippingAbove'] as num?)?.toInt() ?? defaults.freeShippingAbove,
+    deliveryStates: j['deliveryStates'] is List ? (j['deliveryStates'] as List).map((e) => '$e').toList() : defaults.deliveryStates,
   );
 
   ShippingMode get mode => shippingFee == 0
@@ -52,9 +72,9 @@ class ShippingSettings {
   ({String title, String text}) get perk => switch (mode) {
     ShippingMode.free => (title: 'Free shipping', text: 'On every order'),
     ShippingMode.threshold => (title: 'Free shipping', text: 'On orders above ${formatPrice(freeShippingAbove)}'),
-    ShippingMode.flat => (title: 'Flat ${formatPrice(shippingFee)} shipping', text: 'Pan-India delivery'),
+    ShippingMode.flat => (title: 'Flat ${formatPrice(shippingFee)} shipping', text: deliveryStates.isEmpty ? 'Pan-India delivery' : 'Across $deliveryArea'),
   };
 
   /// Replaces {shipping} / {shippingShort} placeholders in copy.
-  String fill(String text) => text.replaceAll('{shipping}', sentence).replaceAll('{shippingShort}', short);
+  String fill(String text) => text.replaceAll('{shipping}', sentence).replaceAll('{shippingShort}', short).replaceAll('{deliveryArea}', deliveryArea);
 }

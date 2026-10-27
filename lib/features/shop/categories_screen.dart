@@ -9,7 +9,6 @@ import '../../data/models/category.dart';
 import '../../state/catalog_provider.dart';
 import '../../widgets/app_image.dart';
 import '../../widgets/common.dart';
-import '../home/widgets/home_sections.dart';
 
 class _Group {
   const _Group(this.label, this.icon, this.items, this.allRoute, this.banner);
@@ -45,20 +44,6 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
       productCategories.where((x) => x.line == 'home').toList(),
       '/shop',
       productLines['home']!.description,
-    ),
-    _Group(
-      'Festive',
-      Icons.celebration_outlined,
-      c.collections.where((x) => x.isFestive).toList(),
-      null,
-      'Diwali, Christmas, Valentine’s and New Year specials.',
-    ),
-    _Group(
-      'Collections',
-      Icons.style_outlined,
-      c.collections.where((x) => !x.isFestive).toList(),
-      null,
-      'Curated edits for every mood and corner of your home.',
     ),
   ].where((g) => g.items.isNotEmpty).toList();
 
@@ -208,7 +193,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
   }
 }
 
-/// Every collection and category as one list (from Home → "View all").
+/// Every category as one list (from Home → "View all").
 class CollectionsScreen extends ConsumerWidget {
   const CollectionsScreen({super.key});
 
@@ -216,15 +201,13 @@ class CollectionsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(catalogProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('All collections')),
+      appBar: AppBar(title: const Text('All categories')),
       body: async.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => ErrorRetry(message: '$e', onRetry: () => ref.read(catalogProvider.notifier).refresh()),
         data: (c) => ListView(
           padding: const EdgeInsets.only(bottom: 24),
           children: [
-            const SectionTitle('Collections', subtitle: 'Festive specials & curated edits', action: ''),
-            const CollectionRail(),
             const SectionTitle('Categories', action: ''),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),

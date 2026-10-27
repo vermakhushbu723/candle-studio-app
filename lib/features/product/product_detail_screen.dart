@@ -68,7 +68,12 @@ class _ProductViewState extends ConsumerState<_ProductView> {
 
   Product get p => widget.product;
 
-  List<String> get _images => p.imagesFor(_color);
+  List<String> get _images {
+    final own = p.imagesFor(_color);
+    if (p.colors.isNotEmpty) return own;
+    final siblings = ref.read(catalogProvider).valueOrNull?.variantsOf(p) ?? const <Product>[];
+    return {...own, for (final s in siblings) ...s.images}.toList();
+  }
 
   void _pickColor(String name) {
     setState(() => _color = name);
@@ -385,7 +390,7 @@ class _ProductViewState extends ConsumerState<_ProductView> {
                     children: [
                       for (final (icon, title, text) in [
                         (Icons.local_shipping_outlined, shipping.short, 'Dispatched same day before 2 PM · metros in 2–3 days'),
-                        (Icons.payments_outlined, 'Cash on Delivery available', '22,000+ pin codes across India'),
+                        (Icons.payments_outlined, 'Cash on Delivery available', 'On every order · delivering across ${shipping.deliveryArea}'),
                         (Icons.sync_rounded, '7-day easy returns', 'Damaged in transit? Free replacement'),
                         (Icons.back_hand_outlined, 'Hand-poured in India', 'Made in small batches · packed gift-ready'),
                       ])
@@ -425,7 +430,7 @@ class _ProductViewState extends ConsumerState<_ProductView> {
                       _expand(
                         'Shipping & returns',
                         child: _paragraph(
-                          'Dispatched same day before 2 PM. Metros in 2–3 days, rest of India in 4–6 days. COD available. ${shipping.sentence}\n\nReturns within 7 days for unused items. Damaged in transit? Share an unboxing video within 48 hours for a free replacement.',
+                          'We deliver only in ${shipping.deliveryArea}. Dispatched same day before 2 PM — Noida & Ghaziabad in 1–2 days, rest of UP in 2–4 days. COD available. ${shipping.sentence}\n\nReturns within 7 days for unused items. Damaged in transit? Share an unboxing video within 48 hours for a free replacement.',
                         ),
                       ),
                     ],

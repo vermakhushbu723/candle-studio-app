@@ -12,7 +12,8 @@ void showToast(BuildContext context, String message, {bool error = false}) {
       SnackBar(
         content: Text(message),
         backgroundColor: error ? AppColors.danger : AppColors.charcoal,
-        duration: Duration(milliseconds: error ? 3500 : 2200),
+        duration: const Duration(seconds: 5),
+        persist: false,
       ),
     );
 }
