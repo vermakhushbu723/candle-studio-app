@@ -111,7 +111,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             payment: _payment,
             couponCode: totals.coupon?.code,
             items: [
-              for (final l in totals.lines) {'productId': l.product.id, 'quantity': l.item.quantity, 'fragrance': l.item.fragrance, 'color': l.item.color},
+              for (final l in totals.lines) {'productId': l.product.id, 'quantity': l.item.quantity, 'pack': l.item.pack, 'color': l.item.color, 'fragrance': l.item.fragrance},
             ],
           );
       if (placed.razorpay == null) return _finish(placed.order); // Cash on Delivery

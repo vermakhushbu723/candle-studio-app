@@ -8,7 +8,6 @@ import '../../core/config/app_config.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/format.dart';
-import '../../data/content/catalog_content.dart';
 import '../../data/content/site_content.dart';
 import '../../data/models/product.dart';
 import '../../state/cart_provider.dart';
@@ -46,13 +45,17 @@ class ProductDetailScreen extends ConsumerWidget {
               ),
       );
     }
-    return _ProductView(product: product);
+    // An old pack link (…-pack-of-2) opens the product with that pack chosen
+    final n = product.id == id ? null : RegExp(r'pack-of-(\d+)$').firstMatch(id)?.group(1);
+    final initialPack = n == null ? null : product.packs.where((x) => RegExp('\\b$n\\b').hasMatch(x.label)).firstOrNull?.label;
+    return _ProductView(key: ValueKey(product.id), product: product, initialPack: initialPack);
   }
 }
 
 class _ProductView extends ConsumerStatefulWidget {
-  const _ProductView({required this.product});
+  const _ProductView({super.key, required this.product, this.initialPack});
   final Product product;
+  final String? initialPack;
 
   @override
   ConsumerState<_ProductView> createState() => _ProductViewState();
@@ -60,7 +63,8 @@ class _ProductView extends ConsumerStatefulWidget {
 
 class _ProductViewState extends ConsumerState<_ProductView> {
   int _qty = 1;
-  late String? _fragrance = widget.product.hasFragrances ? fragrances.first.id : null;
+  late String? _pack = widget.initialPack ?? widget.product.packs.firstOrNull?.label;
+  late String? _fragrance = widget.product.fragranceOptions.firstOrNull;
   late String? _color = widget.product.colors.firstOrNull?.name;
   final _gallery = PageController();
   final _scroll = ScrollController();
@@ -68,11 +72,13 @@ class _ProductViewState extends ConsumerState<_ProductView> {
 
   Product get p => widget.product;
 
-  List<String> get _images {
-    final own = p.imagesFor(_color);
-    if (p.colors.isNotEmpty) return own;
-    final siblings = ref.read(catalogProvider).valueOrNull?.variantsOf(p) ?? const <Product>[];
-    return {...own, for (final s in siblings) ...s.images}.toList();
+  List<String> get _images => p.imagesFor(color: _color, pack: _pack);
+  int get _price => p.priceFor(_pack);
+  int? get _compareAt => p.packs.isEmpty ? p.compareAt : p.packOf(_pack)?.compareAt;
+
+  void _pickPack(String label) {
+    setState(() => _pack = label);
+    if (_gallery.hasClients) _gallery.jumpToPage(0);
   }
 
   void _pickColor(String name) {
@@ -97,23 +103,23 @@ class _ProductViewState extends ConsumerState<_ProductView> {
   }
 
   void _buyNow() {
-    ref.read(cartProvider.notifier).add(p.id, quantity: _qty, fragrance: _fragrance, color: _color);
+    ref.read(cartProvider.notifier).add(p.id, quantity: _qty, pack: _pack, fragrance: _fragrance, color: _color);
     context.push('/checkout');
   }
 
-  void _share() => Share.share('${p.name} — ${formatPrice(p.price)}\n${AppConfig.siteUrl}/product/${p.id}');
+  void _share() => Share.share('${p.name} — ${formatPrice(_price)}\n${AppConfig.siteUrl}/product/${p.id}');
 
   @override
   Widget build(BuildContext context) {
     final catalog = ref.watch(catalogProvider).valueOrNull;
     final shipping = ref.watch(shippingProvider);
     final wished = ref.watch(wishlistProvider).contains(p.id);
-    final inBag = ref.watch(cartProvider).items.any((i) => i.productId == p.id && (p.colors.isEmpty || i.color == _color));
+    final inBag = ref.watch(cartProvider).items.any((i) => i.productId == p.id && i.pack == _pack && i.color == _color && i.fragrance == _fragrance);
     final bagCount = ref.watch(cartTotalsProvider).count;
     final category = catalog?.category(p.category);
     final related = (catalog?.products ?? []).where((x) => x.id != p.id && (x.category == p.category || x.collections.any(p.collections.contains))).take(8).toList();
     final images = _images;
-    final packs = catalog?.variantsOf(p) ?? const <Product>[];
+    final packs = p.packs;
     final width = MediaQuery.sizeOf(context).width;
 
     Widget roundIcon(IconData icon, VoidCallback onTap, {Color? color, Widget? child}) => Padding(
@@ -134,7 +140,7 @@ class _ProductViewState extends ConsumerState<_ProductView> {
           children: [
             Expanded(
               child: OutlinedButton.icon(
-                onPressed: p.outOfStock ? null : () => inBag ? context.go('/cart') : addToCart(context, ref, p, quantity: _qty, fragrance: _fragrance, color: _color),
+                onPressed: p.outOfStock ? null : () => inBag ? context.go('/cart') : addToCart(context, ref, p, quantity: _qty, pack: _pack, fragrance: _fragrance, color: _color),
                 icon: Icon(inBag ? Icons.shopping_bag_rounded : Icons.shopping_bag_outlined, size: 20),
                 label: Text(inBag ? 'GO TO BAG' : 'ADD TO BAG'),
               ),
@@ -250,7 +256,7 @@ class _ProductViewState extends ConsumerState<_ProductView> {
                         ),
                       ],
                       const SizedBox(height: 12),
-                      PriceText(price: p.price, compareAt: p.compareAt, size: 22),
+                      PriceText(price: _price, compareAt: _compareAt, size: 22),
                       Text('Inclusive of all taxes', style: AppText.muted(size: 11.5)),
                       if (p.stock != null && p.stock! > 0 && p.stock! <= 5)
                         Padding(
@@ -315,9 +321,9 @@ class _ProductViewState extends ConsumerState<_ProductView> {
                     ),
                   ),
                 // Pack size
-                if (packs.isNotEmpty)
+                if (packs.length > 1)
                   SectionCard(
-                    title: 'Pack size: ${p.variantLabel}',
+                    title: 'Pack size: ${_pack ?? ''}',
                     child: Wrap(
                       spacing: 8,
                       runSpacing: 8,
@@ -327,45 +333,37 @@ class _ProductViewState extends ConsumerState<_ProductView> {
                             label: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(v.variantLabel.isNotEmpty ? v.variantLabel : v.subtitle),
+                                Text(v.label, style: AppText.sans(size: 13, weight: FontWeight.w600, color: v.label == _pack ? Colors.white : AppColors.charcoal)),
                                 Text(
-                                  v.outOfStock ? 'Sold out' : formatPrice(v.price),
-                                  style: AppText.sans(size: 11, weight: FontWeight.w700, color: v.id == p.id ? Colors.white : AppColors.ash),
+                                  formatPrice(v.price),
+                                  style: AppText.sans(size: 11, weight: FontWeight.w700, color: v.label == _pack ? Colors.white : AppColors.ash),
                                 ),
                               ],
                             ),
-                            selected: v.id == p.id,
+                            selected: v.label == _pack,
                             showCheckmark: false,
-                            onSelected: (_) {
-                              if (v.id != p.id) context.pushReplacement('/product/${v.id}');
-                            },
+                            onSelected: (_) => _pickPack(v.label),
                           ),
                       ],
                     ),
                   ),
                 // Fragrance & quantity
                 SectionCard(
-                  title: p.hasFragrances ? 'Choose fragrance' : 'Quantity',
+                  title: p.fragranceOptions.isNotEmpty ? 'Fragrance: ${_fragrance ?? ''}' : 'Quantity',
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (p.hasFragrances) ...[
+                      if (p.fragranceOptions.isNotEmpty) ...[
                         Wrap(
                           spacing: 8,
                           runSpacing: 8,
                           children: [
-                            for (final f in fragrances)
+                            for (final f in p.fragranceOptions)
                               ChoiceChip(
-                                label: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(f.label),
-                                    Text(f.note, style: AppText.sans(size: 10.5, color: _fragrance == f.id ? Colors.white70 : AppColors.ash)),
-                                  ],
-                                ),
-                                selected: _fragrance == f.id,
+                                label: Text(f, style: AppText.sans(size: 13, weight: FontWeight.w600, color: _fragrance == f ? Colors.white : AppColors.charcoal)),
+                                selected: _fragrance == f,
                                 showCheckmark: false,
-                                onSelected: (_) => setState(() => _fragrance = f.id),
+                                onSelected: (_) => setState(() => _fragrance = f),
                               ),
                           ],
                         ),
@@ -373,11 +371,9 @@ class _ProductViewState extends ConsumerState<_ProductView> {
                       ],
                       Row(
                         children: [
-                          if (p.hasFragrances) Text('Quantity', style: AppText.sans(weight: FontWeight.w600)),
-                          if (p.hasFragrances) const Spacer(),
                           QuantityStepper(value: _qty, onChanged: (v) => setState(() => _qty = v)),
-                          if (!p.hasFragrances) const Spacer(),
-                          if (!p.hasFragrances) Text(formatPrice(p.price * _qty), style: AppText.sans(size: 16, weight: FontWeight.w800)),
+                          const Spacer(),
+                          Text(formatPrice(_price * _qty), style: AppText.sans(size: 16, weight: FontWeight.w800)),
                         ],
                       ),
                     ],

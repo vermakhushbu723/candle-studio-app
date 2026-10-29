@@ -5,21 +5,27 @@ import '../data/models/product.dart';
 import '../data/repositories/order_repository.dart';
 import 'catalog_provider.dart';
 
-/// One cart row. The same product in two fragrances or colours is two rows.
+/// One cart row. The same product in another pack, colour or fragrance is another row.
 class CartItem {
-  const CartItem({required this.productId, this.fragrance, this.color, required this.quantity});
+  const CartItem({required this.productId, this.pack, this.fragrance, this.color, required this.quantity});
   final String productId;
+  final String? pack;
   final String? fragrance;
   final String? color;
   final int quantity;
 
-  String get key => '${productId}__${fragrance ?? 'default'}${color == null ? '' : '__$color'}';
+  String get key => [productId, pack ?? '', color ?? '', fragrance ?? ''].join('__');
 
-  CartItem copyWith({int? quantity}) => CartItem(productId: productId, fragrance: fragrance, color: color, quantity: quantity ?? this.quantity);
+  /// "Pack of 2 · Red · Vanilla"
+  String get choices => [?pack, ?color, ?fragrance].join(' · ');
 
-  Map<String, dynamic> toJson() => {'productId': productId, 'fragrance': fragrance, 'color': color, 'quantity': quantity};
+  CartItem copyWith({int? quantity}) =>
+      CartItem(productId: productId, pack: pack, fragrance: fragrance, color: color, quantity: quantity ?? this.quantity);
+
+  Map<String, dynamic> toJson() => {'productId': productId, 'pack': pack, 'fragrance': fragrance, 'color': color, 'quantity': quantity};
   factory CartItem.fromJson(Map<String, dynamic> j) => CartItem(
     productId: '${j['productId']}',
+    pack: j['pack'] as String?,
     fragrance: j['fragrance'] as String?,
     color: j['color'] as String?,
     quantity: (j['quantity'] as num?)?.toInt() ?? 1,
@@ -44,11 +50,17 @@ class CartNotifier extends Notifier<CartState> {
     LocalStorage.write(LocalStorage.cart, items.map((i) => i.toJson()).toList());
   }
 
-  void add(String productId, {int quantity = 1, String? fragrance, String? color}) {
-    // Products with colours always carry one, defaulting to the first
-    final colors = ref.read(catalogProvider).valueOrNull?.product(productId)?.colors ?? const [];
-    final colour = colors.isEmpty ? null : (colors.any((c) => c.name == color) ? color : colors.first.name);
-    final item = CartItem(productId: productId, fragrance: fragrance, color: colour, quantity: quantity);
+  void add(String productId, {int quantity = 1, String? pack, String? fragrance, String? color}) {
+    // Every variation the product offers is always set, defaulting to its first option
+    final p = ref.read(catalogProvider).valueOrNull?.product(productId);
+    String? pick(List<String> options, String? chosen) => options.isEmpty ? null : (options.contains(chosen) ? chosen : options.first);
+    final item = CartItem(
+      productId: p?.id ?? productId,
+      pack: pick([for (final x in p?.packs ?? const <ProductPack>[]) x.label], pack),
+      color: pick([for (final c in p?.colors ?? const <ProductColor>[]) c.name], color),
+      fragrance: pick(p?.fragranceOptions ?? const [], fragrance),
+      quantity: quantity,
+    );
     final existing = state.items.indexWhere((i) => i.key == item.key);
     final items = [...state.items];
     if (existing >= 0) {
@@ -79,8 +91,9 @@ class CartLine {
   const CartLine(this.item, this.product);
   final CartItem item;
   final Product product;
-  int get lineTotal => product.price * item.quantity;
-  String? get image => item.color == null ? product.image : product.imagesFor(item.color).firstOrNull;
+  int get unitPrice => product.priceFor(item.pack);
+  int get lineTotal => unitPrice * item.quantity;
+  String? get image => product.imagesFor(color: item.color, pack: item.pack).firstOrNull;
 }
 
 /// Totals — same maths as the API so the summary matches the final order.

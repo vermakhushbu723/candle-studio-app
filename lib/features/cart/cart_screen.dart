@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/format.dart';
-import '../../data/content/catalog_content.dart';
 import '../../state/cart_provider.dart';
 import '../../state/catalog_provider.dart';
 import '../../state/wishlist_provider.dart';
@@ -205,9 +204,9 @@ class _CartItem extends ConsumerWidget {
                     ),
                   ],
                 ),
-                Text([p.subtitle.isNotEmpty ? p.subtitle : p.categoryLabel, ?line.item.color, ?fragranceLabel(line.item.fragrance)].join(' · '), style: AppText.muted(size: 12)),
+                Text(line.item.choices.isNotEmpty ? line.item.choices : (p.subtitle.isNotEmpty ? p.subtitle : p.categoryLabel), style: AppText.muted(size: 12)),
                 const SizedBox(height: 6),
-                PriceText(price: p.price, compareAt: p.compareAt, size: 14),
+                PriceText(price: line.unitPrice, compareAt: p.packOf(line.item.pack)?.compareAt ?? p.compareAt, size: 14),
                 const SizedBox(height: 10),
                 Row(
                   children: [

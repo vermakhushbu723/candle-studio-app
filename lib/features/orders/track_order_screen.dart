@@ -271,7 +271,7 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(it.name, style: AppText.sans(size: 13.5, weight: FontWeight.w600)),
-                          Text('Qty ${it.quantity}${it.color == null ? '' : ' · ${it.color}'}${it.fragrance == null ? '' : ' · ${it.fragrance}'}', style: AppText.muted(size: 12)),
+                          Text(['Qty ${it.quantity}', ?it.pack, ?it.color, ?it.fragrance].join(' · '), style: AppText.muted(size: 12)),
                         ],
                       ),
                     ),

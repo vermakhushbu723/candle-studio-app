@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_theme.dart';
-import '../data/content/catalog_content.dart';
 import '../data/models/product.dart';
 import '../state/cart_provider.dart';
 import '../state/wishlist_provider.dart';
@@ -12,8 +11,8 @@ import 'app_image.dart';
 import 'common.dart';
 
 /// Adds to the cart and offers a shortcut to it (product cards, product page, chatbot).
-void addToCart(BuildContext context, WidgetRef ref, Product product, {int quantity = 1, String? fragrance, String? color}) {
-  ref.read(cartProvider.notifier).add(product.id, quantity: quantity, fragrance: fragrance ?? (product.hasFragrances ? fragrances.first.id : null), color: color);
+void addToCart(BuildContext context, WidgetRef ref, Product product, {int quantity = 1, String? pack, String? fragrance, String? color}) {
+  ref.read(cartProvider.notifier).add(product.id, quantity: quantity, pack: pack, fragrance: fragrance, color: color);
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
     ..showSnackBar(
@@ -125,13 +124,25 @@ class ProductCard extends ConsumerWidget {
                           ],
                         )
                       else
-                        Text(product.subtitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppText.muted(size: 11.5)),
+                        Text(
+                          product.optionsSummary.isNotEmpty ? product.optionsSummary : product.subtitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppText.muted(size: 11.5),
+                        ),
                       const Spacer(),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Expanded(
-                            child: PriceText(price: product.price, compareAt: product.compareAt, size: 14),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (product.packs.length > 1) Text('From', style: AppText.muted(size: 10.5)),
+                                PriceText(price: product.price, compareAt: product.compareAt, size: 14),
+                              ],
+                            ),
                           ),
                           const SizedBox(width: 4),
                           SizedBox(

@@ -15,7 +15,7 @@ class Catalog {
   final ShippingSettings shipping;
   final Map<String, Product> _byId;
 
-  Product? product(String id) => _byId[id];
+  Product? product(String id) => _byId[id] ?? _byId[id.replaceFirst(RegExp(r'-(pack-of-\d+|combo)$'), '')];
 
   /// Product categories + collections (same list the website shows in Shop filters).
   List<Category> get categories => [...productCategories, ...collections];
@@ -31,13 +31,6 @@ class Catalog {
   List<Product> get bestsellers {
     final marked = products.where((p) => bestsellerBadges.contains(p.badge)).toList();
     return marked.isNotEmpty ? marked : products.where((p) => p.isSingle).toList();
-  }
-
-  /// Pack sizes of the same design (Single, Pack of 2…), cheapest first — empty when there is no choice.
-  List<Product> variantsOf(Product p) {
-    if (p.variantGroup.isEmpty) return const [];
-    final group = products.where((x) => x.variantGroup == p.variantGroup).toList()..sort((a, b) => a.price - b.price);
-    return group.length > 1 ? group : const [];
   }
 
   /// True when a product belongs to a category, directly or through a collection.

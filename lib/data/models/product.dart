@@ -1,5 +1,21 @@
 import '../content/catalog_content.dart';
 
+/// A pack / quantity option of the product (Single, Pack of 2…) with its own price and photos.
+class ProductPack {
+  const ProductPack({required this.label, required this.price, this.compareAt, this.images = const []});
+  final String label;
+  final int price;
+  final int? compareAt;
+  final List<String> images;
+
+  factory ProductPack.fromJson(Map<String, dynamic> j) => ProductPack(
+    label: '${j['label'] ?? ''}',
+    price: (j['price'] as num?)?.toInt() ?? 0,
+    compareAt: (j['compareAt'] as num?)?.toInt(),
+    images: j['images'] is List ? (j['images'] as List).map((e) => '$e').toList() : const [],
+  );
+}
+
 /// A colour the customer can pick; its photos replace the gallery when chosen.
 class ProductColor {
   const ProductColor({required this.name, this.hex = '', this.images = const []});
@@ -36,7 +52,9 @@ class Product {
     required this.howToUse,
     required this.hasFragrances,
     required this.images,
+    this.packs = const [],
     this.colors = const [],
+    this.fragranceOptions = const [],
     this.variantGroup = '',
     this.variantLabel = '',
     this.cover,
@@ -63,7 +81,9 @@ class Product {
   final List<String> howToUse;
   final bool hasFragrances;
   final List<String> images;
+  final List<ProductPack> packs; // first = default; `price` mirrors it
   final List<ProductColor> colors;
+  final List<String> fragranceOptions;
   final String variantGroup; // pack sizes of one design share a group
   final String variantLabel; // e.g. "Pack of 2"
   final String? cover; // visual.image
@@ -71,18 +91,33 @@ class Product {
   final int? stock;
 
   String get categoryLabel => categoryLabelOf(category) ?? 'Handcrafted';
-  bool get isSingle => isSinglePiece(name, subtitle);
+  bool get isSingle => packs.isNotEmpty || isSinglePiece(name, subtitle);
   bool get hasReviews => reviews > 0;
   String? get image => cover ?? (images.isNotEmpty ? images.first : null);
   bool get outOfStock => stock != null && stock! <= 0;
 
-  /// Photos for a colour, falling back to the product photos.
-  List<String> imagesFor(String? color) {
+  /// The chosen pack, or the default (first) one; null when sold in one size.
+  ProductPack? packOf(String? label) => packs.where((x) => x.label == label).firstOrNull ?? packs.firstOrNull;
+
+  /// Price of one unit in a pack.
+  int priceFor(String? pack) => packOf(pack)?.price ?? price;
+
+  /// Photos for the chosen variations: the colour's, else the pack's own first, then the product's.
+  List<String> imagesFor({String? color, String? pack}) {
     for (final c in colors) {
       if (c.name == color && c.images.isNotEmpty) return c.images;
     }
-    return images.isEmpty ? [?image] : images;
+    final own = images.isEmpty ? [?image] : images;
+    final packImages = packs.where((x) => x.label == pack).firstOrNull?.images ?? const <String>[];
+    return {...packImages, ...own}.toList();
   }
+
+  /// "3 pack sizes · 2 colours · 4 fragrances" — shown on product cards.
+  String get optionsSummary => [
+    if (packs.length > 1) '${packs.length} pack sizes',
+    if (colors.isNotEmpty) '${colors.length} colours',
+    if (fragranceOptions.isNotEmpty) '${fragranceOptions.length} fragrances',
+  ].join(' · ');
 
   static List<String> _strings(Object? v) => v is List ? v.map((e) => '$e').toList() : const [];
 
@@ -108,6 +143,10 @@ class Product {
       howToUse: _strings(j['howToUse']),
       hasFragrances: j['fragrances'] == true,
       images: _strings(j['images']),
+      packs: j['packs'] is List
+          ? [for (final x in j['packs'] as List) if (x is Map) ProductPack.fromJson(Map<String, dynamic>.from(x))]
+          : const [],
+      fragranceOptions: _strings(j['fragranceOptions']),
       colors: j['colors'] is List
           ? [for (final c in j['colors'] as List) if (c is Map) ProductColor.fromJson(Map<String, dynamic>.from(c))]
           : const [],

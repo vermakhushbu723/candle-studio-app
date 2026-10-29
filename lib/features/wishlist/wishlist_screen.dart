@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
-import '../../data/content/catalog_content.dart';
 import '../../state/cart_provider.dart';
 import '../../state/catalog_provider.dart';
 import '../../state/wishlist_provider.dart';
@@ -24,7 +23,7 @@ class WishlistScreen extends ConsumerWidget {
 
     void addAll() {
       for (final p in available) {
-        ref.read(cartProvider.notifier).add(p.id, fragrance: p.hasFragrances ? fragrances.first.id : null);
+        ref.read(cartProvider.notifier).add(p.id);
       }
       showToast(context, '${available.length} item${available.length == 1 ? '' : 's'} added to bag');
       context.go('/cart');
